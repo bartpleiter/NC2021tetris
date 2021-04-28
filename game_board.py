@@ -31,13 +31,13 @@ class Board(object):
         self.falling_shape = None
         self.next_shape = None
         self.score = 0
-        self.bag = [SquareShape(STARTING_COLUMN, STARTING_ROW, 6, 0), 
-                    LineShape(STARTING_COLUMN, STARTING_ROW, 5, 1),
-                    SShape(STARTING_COLUMN, STARTING_ROW, 3, 1),
-                    LShape(STARTING_COLUMN, STARTING_ROW, 6, 3),
-                    TShape(STARTING_COLUMN, STARTING_ROW, 4, 0),
-                    ZShape(STARTING_COLUMN, STARTING_ROW, 1, 1),
-                    JShape(STARTING_COLUMN, STARTING_ROW, 2, 1)] # bag of tetrominos
+        self.bag = [SquareShape(PREVIEW_COLUMN, PREVIEW_ROW, 6, 0), 
+                    LineShape(PREVIEW_COLUMN, PREVIEW_ROW, 5, 1),
+                    SShape(PREVIEW_COLUMN, PREVIEW_ROW, 3, 1),
+                    LShape(PREVIEW_COLUMN, PREVIEW_ROW, 6, 3),
+                    TShape(PREVIEW_COLUMN, PREVIEW_ROW, 4, 0),
+                    ZShape(PREVIEW_COLUMN, PREVIEW_ROW, 1, 1),
+                    JShape(PREVIEW_COLUMN, PREVIEW_ROW, 2, 1)] # bag of tetrominos
         self.shuffle_bag()
         self.bagNextIndex = 0
 
