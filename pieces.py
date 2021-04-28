@@ -125,26 +125,6 @@ class Shape(object):
         """Rotate counterclockwise."""
         self._rotate(clockwise=False)
 
-    @staticmethod
-    def random(starting_column, starting_row):
-        """Returns a randomly chosen piece at the given position."""
-        rand = randint(0, 6)
-        if rand == 0:
-            new_piece = SquareShape(starting_column, starting_row, 6, 0)
-        elif rand == 1:
-            new_piece = LineShape(starting_column, starting_row, 5, 1)
-        elif rand == 2:
-            new_piece = SShape(starting_column, starting_row, 3, 1)
-        elif rand == 3:
-            new_piece = LShape(starting_column, starting_row, 6, 3)
-        elif rand == 4:
-            new_piece = TShape(starting_column, starting_row, 4, 0)
-        elif rand == 5:
-            new_piece = ZShape(starting_column, starting_row, 1, 1)
-        elif rand == 6:
-            new_piece = JShape(starting_column, starting_row, 2, 1)
-        return new_piece
-
 
 class SquareShape(Shape):
     """ Orientation:    0

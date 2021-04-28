@@ -1,8 +1,9 @@
 import copy
 import curses
 import math
+import random
 
-from pieces import Shape
+from pieces import *
 
 
 NUM_COLUMNS = 10
@@ -30,11 +31,30 @@ class Board(object):
         self.falling_shape = None
         self.next_shape = None
         self.score = 0
+        self.bag = [SquareShape(STARTING_COLUMN, STARTING_ROW, 6, 0), 
+                    LineShape(STARTING_COLUMN, STARTING_ROW, 5, 1),
+                    SShape(STARTING_COLUMN, STARTING_ROW, 3, 1),
+                    LShape(STARTING_COLUMN, STARTING_ROW, 6, 3),
+                    TShape(STARTING_COLUMN, STARTING_ROW, 4, 0),
+                    ZShape(STARTING_COLUMN, STARTING_ROW, 1, 1),
+                    JShape(STARTING_COLUMN, STARTING_ROW, 2, 1)] # bag of tetrominos
+        self.shuffle_bag()
+        self.bagNextIndex = 0
+
+    def shuffle_bag(self):
+        random.shuffle(self.bag)
+
+    def next_tetromino(self):
+        self.next_shape = copy.deepcopy(self.bag[self.bagNextIndex])
+        self.bagNextIndex += 1
+        if self.bagNextIndex == 7:
+            self.bagNextIndex = 0
+            self.shuffle_bag()
 
     def start_game(self):
         self.score = 0
         if self.next_shape is None:
-            self.next_shape = Shape.random(PREVIEW_COLUMN, PREVIEW_ROW)
+            self.next_tetromino()
             self.new_shape()
 
     def end_game(self):
@@ -43,7 +63,7 @@ class Board(object):
     def new_shape(self):
         self.falling_shape = self.next_shape
         self.falling_shape.move_to(STARTING_COLUMN, STARTING_ROW)
-        self.next_shape = Shape.random(PREVIEW_COLUMN, PREVIEW_ROW)
+        self.next_tetromino()
         if self.shape_cannot_be_placed(self.falling_shape):
             self.next_shape = self.falling_shape
             self.falling_shape = None
