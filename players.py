@@ -1,9 +1,14 @@
 import copy
+import time
+import curses
+from game_board import NUM_COLUMNS, BORDER_WIDTH, BLOCK_WIDTH, PREVIEW_COLUMN
 
+SHOW_AI = True
+SHOW_AI_SPEED = 0.1
 
 class Human(object):
     def __init__(self):
-        self.name = 'Alex'
+        self.name = 'Human'
 
 
 class AI(object):
@@ -26,49 +31,47 @@ class AI(object):
         )
         return score
 
-    def get_moves(self, game_board, fun):
+    def get_moves(self, game_board, board_drawer):
         max_score = -100000
         best_final_position = None
+        #print(game_board.falling_shape)
+        #time.sleep(1)
         falling_orientations = game_board.falling_shape.number_of_orientations
         next_orientations = game_board.next_shape.number_of_orientations
-        for column_position in range(10):
+        for column_position in range(-2, NUM_COLUMNS + 2): # we add -2 and +2 here to make sure all positions at all orientations are included
             for orientation in range(falling_orientations):
                 board = copy.deepcopy(game_board)
-                falling_piece = board.falling_shape
-                falling_piece.orientation = orientation
-                falling_piece.move_to(column_position, 2)
-                if board.shape_cannot_be_placed(falling_piece):
-                    break
-                fun.update_settled_pieces(board)  # clears out the old shadow locations
-                fun.update_falling_piece(game_board)
-                fun.update_shadow(board)
-                fun.refresh_screen()
-                if board.shape_cannot_be_placed(falling_piece):
-                    break
+                board.falling_shape.orientation = orientation
+                board.falling_shape.move_to(column_position, 2)
 
-                while not board.shape_cannot_be_placed(falling_piece):
-                    falling_piece.lower_shape_by_one_row()
-                falling_piece.raise_shape_by_one_row()
-                board._settle_shape(falling_piece)
-                for next_column_position in range(10):
-                    for next_orientation in range(next_orientations):
-                        falling_piece.color = 10
-                        board2 = copy.deepcopy(board)
-                        next_piece = board2.next_shape
-                        board2.falling_shape = board2.next_shape
-                        next_piece.orientation = next_orientation
-                        next_piece.move_to(next_column_position, 2)
-                        if board2.shape_cannot_be_placed(next_piece):
-                            break
-                        while not board2.shape_cannot_be_placed(next_piece):
-                            next_piece.lower_shape_by_one_row()
-                        next_piece.raise_shape_by_one_row()
-                        board2._settle_shape(next_piece)
+                while not board.shape_cannot_be_placed(board.falling_shape):
+                    board.falling_shape.lower_shape_by_one_row()
+                board.falling_shape.raise_shape_by_one_row()
+                if not board.shape_cannot_be_placed(board.falling_shape):
+                    # now we have a valid possible placement
+                    
+                    # show placement of the AI
+                    if SHOW_AI:
+                        board_drawer.update_settled_pieces(board)  # clears out the old shadow locations
+                        board_drawer.update_falling_piece(game_board)
+                        board_drawer.update_shadow(board)
+                        board_drawer.refresh_screen()
 
-                        score = self.score_board(game_board, board2)
-                        if score > max_score:
-                            max_score = score
-                            best_final_position = falling_piece
+                    board._settle_shape(board.falling_shape)
+
+                    score = self.score_board(game_board, board)
+                    if score > max_score:
+                        max_score = score
+                        best_final_position = copy.deepcopy(board.falling_shape)
+
+                    if SHOW_AI:
+                        board_drawer.stdscr.addstr(
+                            BORDER_WIDTH + 14,
+                            PREVIEW_COLUMN*BLOCK_WIDTH-2+BORDER_WIDTH,
+                            'PLACEMENT SCORE: %d' % score,
+                            curses.color_pair(7)
+                        )
+                        time.sleep(SHOW_AI_SPEED)
 
         return best_final_position
 

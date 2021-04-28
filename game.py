@@ -10,7 +10,7 @@ from game_board import Board, BoardDrawer, GameOverError
 from players import Human, AI
 
 
-LEVEL_ONE_TICK_LENGTHMS = 600
+TICK_LENGTH = 600
 
 
 def main():
@@ -31,6 +31,13 @@ class Game(object):
         self.board = None
         self.board_drawer = None
         self.player = player or Human()
+
+        # Game speed management for AI
+        self.useTicks = True
+        self.displayScreen = True
+        if isinstance(self.player, AI):
+            self.useTicks = False
+            self.displayScreen = True # TODO: make false when sure everything works
 
     def new_game(self):
         """Initializes a new game."""
@@ -71,14 +78,9 @@ class Game(object):
 
     def end_game(self):
         """Ends the current game."""
-        pass
-
-    def exit(self):
-        """Exits the program."""
-        self.end_game()
         self.board_drawer.return_screen_to_normal()
         print('Game Over! Final Score: {}'.format(int(self.board.score)))
-        sys.exit(0)
+        sys.exit(int(self.board.score))
 
     def start_ticking(self):
         self.last_tick = datetime.datetime.now()
@@ -87,16 +89,23 @@ class Game(object):
         self.last_tick = None
 
     def update(self):
-        current_time = datetime.datetime.now()
-        tick_multiplier = 1
-        tick_threshold = datetime.timedelta(milliseconds=LEVEL_ONE_TICK_LENGTHMS*tick_multiplier)
-        if self.last_tick and current_time - self.last_tick > tick_threshold:
-            self.last_tick = current_time
+        if self.useTicks:
+            current_time = datetime.datetime.now()
+            tick_multiplier = 1
+            tick_threshold = datetime.timedelta(milliseconds=TICK_LENGTH*tick_multiplier)
+            if self.last_tick and current_time - self.last_tick > tick_threshold:
+                self.last_tick = current_time
+                self._tick()
+        else:
             self._tick()
 
     def _tick(self):
         self.board.let_shape_fall()
-        self.board_drawer.update(self.board)
+        if self.displayScreen:
+            if isinstance(self.player, AI):
+                self.board_drawer.update(self.board, False)
+            else:
+                self.board_drawer.update(self.board, True)
 
     def process_ai_input(self):
         move = self.player.get_moves(self.board, self.board_drawer)
@@ -118,7 +127,7 @@ class Game(object):
             10: self.board.drop_shape,
             13: self.board.drop_shape,
             112: self.pause_game,
-            113: self.exit,
+            113: self.end_game,
         }
         move_fn = moves.get(user_input)
         if move_fn:

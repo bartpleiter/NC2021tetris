@@ -263,7 +263,7 @@ class BoardDrawer(object):
         self.stdscr.addstr(
             6+BORDER_WIDTH,
             PREVIEW_COLUMN*BLOCK_WIDTH-2+BORDER_WIDTH,
-            'SCORE: %d' % board.score,
+            'GAME SCORE: %d' % board.score,
             curses.color_pair(7)
         )
 
@@ -272,7 +272,7 @@ class BoardDrawer(object):
         self.stdscr.addstr(
             6+BORDER_WIDTH,
             PREVIEW_COLUMN*BLOCK_WIDTH-2+BORDER_WIDTH,
-            'SCORE:              ',
+            'GAME SCORE:              ',
             curses.color_pair(7)
         )
 
@@ -287,7 +287,7 @@ class BoardDrawer(object):
             self.stdscr.addstr(0, column_position, '-', curses.color_pair(7))
             self.stdscr.addstr(NUM_ROWS+1, column_position, '-', curses.color_pair(7))
 
-    def update(self, board):
+    def update(self, board, shadows = True):
         """Updates all visual board elements and then refreshes the screen."""
         self.update_border()
         self.update_score(board)
@@ -296,7 +296,9 @@ class BoardDrawer(object):
         self.update_settled_pieces(board)
 
         self.update_falling_piece(board)
-        self.update_shadow(board)
+
+        if shadows:
+            self.update_shadow(board)
 
         self.refresh_screen()
 
