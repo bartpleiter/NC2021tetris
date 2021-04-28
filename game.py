@@ -88,7 +88,7 @@ class Game(object):
 
     def update(self):
         current_time = datetime.datetime.now()
-        tick_multiplier = math.pow(0.9, self.board.level-1)
+        tick_multiplier = 1
         tick_threshold = datetime.timedelta(milliseconds=LEVEL_ONE_TICK_LENGTHMS*tick_multiplier)
         if self.last_tick and current_time - self.last_tick > tick_threshold:
             self.last_tick = current_time

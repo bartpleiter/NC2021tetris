@@ -23,24 +23,22 @@ POINTS_PER_LEVEL = 200
 
 class Board(object):
     """Maintains the entire state of the game."""
-    def __init__(self, columns=None, rows=None, level=None):
+    def __init__(self, columns=None, rows=None):
         self.num_rows = rows or NUM_ROWS
         self.num_columns = columns or NUM_COLUMNS
         self.array = [[None for _ in range(self.num_columns)] for _ in range(self.num_rows)]
         self.falling_shape = None
         self.next_shape = None
         self.score = 0
-        self.level = level or 1
 
     def start_game(self):
         self.score = 0
-        self.level = 1
         if self.next_shape is None:
             self.next_shape = Shape.random(PREVIEW_COLUMN, PREVIEW_ROW)
             self.new_shape()
 
     def end_game(self):
-        raise GameOverError(score=self.score, level=self.level)
+        raise GameOverError(score=self.score)
 
     def new_shape(self):
         self.falling_shape = self.next_shape
@@ -64,8 +62,6 @@ class Board(object):
         if len(rows_removed) > 0:
             points_earned = math.pow(2, len(rows_removed)-1) * POINTS_PER_LINE
             self.score += points_earned
-            if self.score > POINTS_PER_LEVEL * self.level:
-                self.level += 1
 
             for column_index in range(0, NUM_COLUMNS):
                 for row_index in range(lowest_row_removed, 0, -1):
@@ -241,15 +237,8 @@ class BoardDrawer(object):
                     curses.color_pair(block.color)
                 )
 
-    def update_score_and_level(self, board):
-        """Adds the score and level to the next stdscr to be drawn."""
-        # level
-        self.stdscr.addstr(
-            5+BORDER_WIDTH,
-            PREVIEW_COLUMN*BLOCK_WIDTH-2+BORDER_WIDTH,
-            'LEVEL: %d' % board.level,
-            curses.color_pair(7)
-        )
+    def update_score(self, board):
+        """Adds the score to the next stdscr to be drawn."""
         # score
         self.stdscr.addstr(
             6+BORDER_WIDTH,
@@ -259,13 +248,6 @@ class BoardDrawer(object):
         )
 
     def clear_score(self):
-        # level
-        self.stdscr.addstr(
-            5+BORDER_WIDTH,
-            PREVIEW_COLUMN*BLOCK_WIDTH-2+BORDER_WIDTH,
-            'LEVEL:              ',
-            curses.color_pair(7)
-        )
         # score
         self.stdscr.addstr(
             6+BORDER_WIDTH,
@@ -288,7 +270,7 @@ class BoardDrawer(object):
     def update(self, board):
         """Updates all visual board elements and then refreshes the screen."""
         self.update_border()
-        self.update_score_and_level(board)
+        self.update_score(board)
         self.update_next_piece(board)
 
         self.update_settled_pieces(board)
@@ -310,7 +292,6 @@ class BoardDrawer(object):
 
 
 class GameOverError(Exception):
-    def __init__(self, score, level):
+    def __init__(self, score):
         super(GameOverError).__init__(GameOverError)
         self.score = score
-        self.level = level
