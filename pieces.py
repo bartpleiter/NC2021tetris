@@ -11,6 +11,9 @@ class Block(object):
         self.column_position = column_position
         self.color = color
 
+    def getDeepCopy(self):
+        return Block(self.row_position, self.column_position, self.color)
+
 
 class Shape(object):
     """The object representing a shape, including its position, orientation,

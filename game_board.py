@@ -41,11 +41,38 @@ class Board(object):
         self.shuffle_bag()
         self.bagNextIndex = 0
 
+
+    def deepBoardCopy(self):
+        newBoard = Board()
+        newBoard.falling_shape = self.falling_shape
+        newBoard.next_shape = self.next_shape
+        for r in range(self.num_rows):
+            for c in range(self.num_columns):
+                if self.array[r][c] is not None:
+                    newBoard.array[r][c] = self.array[r][c].getDeepCopy()
+        return newBoard
+
+
     def shuffle_bag(self):
         random.shuffle(self.bag)
 
     def next_tetromino(self):
-        self.next_shape = copy.deepcopy(self.bag[self.bagNextIndex])
+
+        if type(self.bag[self.bagNextIndex]) is SquareShape:
+            self.next_shape = SquareShape(PREVIEW_COLUMN, PREVIEW_ROW, 6, 0)
+        if type(self.bag[self.bagNextIndex]) is LineShape:
+            self.next_shape = LineShape(PREVIEW_COLUMN, PREVIEW_ROW, 5, 1)
+        if type(self.bag[self.bagNextIndex]) is SShape:
+            self.next_shape = SShape(PREVIEW_COLUMN, PREVIEW_ROW, 3, 1)
+        if type(self.bag[self.bagNextIndex]) is LShape:
+            self.next_shape = LShape(PREVIEW_COLUMN, PREVIEW_ROW, 6, 3)
+        if type(self.bag[self.bagNextIndex]) is TShape:
+            self.next_shape = TShape(PREVIEW_COLUMN, PREVIEW_ROW, 4, 0)
+        if type(self.bag[self.bagNextIndex]) is ZShape:
+            self.next_shape = ZShape(PREVIEW_COLUMN, PREVIEW_ROW, 1, 1)
+        if type(self.bag[self.bagNextIndex]) is JShape:
+            self.next_shape = JShape(PREVIEW_COLUMN, PREVIEW_ROW, 2, 1)
+        
         self.bagNextIndex += 1
         if self.bagNextIndex == 7:
             self.bagNextIndex = 0
@@ -76,7 +103,11 @@ class Board(object):
         for row in self.array:
             if all(row):
                 lowest_row_removed = max(lowest_row_removed, row[0].row_position)
-                rows_removed.append(copy.deepcopy(row))
+                removedRow = []
+                for block in row:
+                    removedRow.append(block.getDeepCopy())
+                rows_removed.append(removedRow)
+                #rows_removed.append(copy.deepcopy(row))
                 for block in row:
                     self.array[block.row_position][block.column_position] = None
         if len(rows_removed) > 0:
@@ -226,7 +257,7 @@ class BoardDrawer(object):
     def update_shadow(self, board):
         """Adds the 'shadow' of the falling piece to the next stdscr to be drawn."""
         # where this piece will land
-        shadow = copy.deepcopy(board.falling_shape)
+        shadow = copy.deepcopy(board.falling_shape) # deepcopy is no problem here, because only used for graphics
         if shadow:
             while not board.shape_cannot_be_placed(shadow):
                 shadow.lower_shape_by_one_row()
@@ -295,10 +326,12 @@ class BoardDrawer(object):
 
         self.update_settled_pieces(board)
 
-        self.update_falling_piece(board)
-
         if shadows:
             self.update_shadow(board)
+
+        self.update_falling_piece(board)
+
+        
 
         self.refresh_screen()
 

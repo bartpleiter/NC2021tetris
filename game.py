@@ -5,9 +5,10 @@ import datetime
 import math
 import signal
 import sys
+import time
 
 from game_board import Board, BoardDrawer, GameOverError
-from players import Human, AI
+from players import Human, AI, AI_DISPLAY_SCREEN
 
 
 TICK_LENGTH = 600
@@ -37,14 +38,18 @@ class Game(object):
         self.displayScreen = True
         if isinstance(self.player, AI):
             self.useTicks = False
-            self.displayScreen = True # TODO: make false when sure everything works
+            if not AI_DISPLAY_SCREEN:
+                self.displayScreen = False
+        
+        
 
     def new_game(self):
         """Initializes a new game."""
         self.last_tick = None
         self.board = Board()
-        self.board_drawer = BoardDrawer()
-        self.board_drawer.clear_score()
+        if self.displayScreen:
+            self.board_drawer = BoardDrawer()
+            self.board_drawer.clear_score()
         self.board.start_game()
 
     def pause_game(self):
@@ -63,10 +68,13 @@ class Game(object):
                     self.process_user_input()
                 elif isinstance(self.player, AI):
                     self.process_ai_input()
+                    
                 self.update()
+
             except GameOverError:
                 self.end_game()
                 return self.board.score
+        
 
     def save_game(self):
         """Writes the state of the game to a file."""
@@ -78,8 +86,10 @@ class Game(object):
 
     def end_game(self):
         """Ends the current game."""
-        self.board_drawer.return_screen_to_normal()
+        if self.displayScreen:
+            self.board_drawer.return_screen_to_normal()
         print('Game Over! Final Score: {}'.format(int(self.board.score)))
+        #print('Blocks placed: {}'.format(int(self.player.totalMoves)))
         sys.exit(int(self.board.score))
 
     def start_ticking(self):
@@ -108,11 +118,11 @@ class Game(object):
                 self.board_drawer.update(self.board, True)
 
     def process_ai_input(self):
-        move = self.player.get_moves(self.board, self.board_drawer)
-        if move:
-            self.board.falling_shape.orientation = move.orientation
-            self.board.falling_shape.move_to(move.column_position, move.row_position)
-            self.board_drawer.update(self.board)
+        row, col, orient = self.player.get_moves(self.board, self.board_drawer)
+        if row:
+            self.board.falling_shape.orientation = orient
+            self.board.falling_shape.move_to(col, row)
+            #self.board_drawer.update(self.board)
         else:
             self.end_game()
 
@@ -137,7 +147,10 @@ class Game(object):
 
 
 def signal_handler(signal, frame):
-    BoardDrawer.return_screen_to_normal()
+    try:
+        BoardDrawer.return_screen_to_normal()
+    except:
+        pass
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)

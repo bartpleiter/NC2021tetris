@@ -1,10 +1,10 @@
-import copy
 import time
 import curses
 from game_board import NUM_COLUMNS, BORDER_WIDTH, BLOCK_WIDTH, PREVIEW_COLUMN
 
-SHOW_AI = True
+SHOW_AI = False
 SHOW_AI_SPEED = 0.1
+AI_DISPLAY_SCREEN = False
 
 class Human(object):
     def __init__(self):
@@ -15,6 +15,7 @@ class AI(object):
 
     def __init__(self, weights=None):
         self.weights = weights or (-8, -18, -10.497, 16.432)
+        #self.totalMoves = 0
 
     def score_board(self, original_board, this_board):
         height_sum = get_height_sum(this_board)
@@ -32,15 +33,21 @@ class AI(object):
         return score
 
     def get_moves(self, game_board, board_drawer):
+        #self.totalMoves += 1
+        #start = time.time()
         max_score = -100000
-        best_final_position = None
-        #print(game_board.falling_shape)
-        #time.sleep(1)
+
+        best_final_column_position = None
+        best_final_row_position = None
+        best_final_orientation = None
+
         falling_orientations = game_board.falling_shape.number_of_orientations
         next_orientations = game_board.next_shape.number_of_orientations
+
+        originalBoard = game_board.deepBoardCopy()
         for column_position in range(-2, NUM_COLUMNS + 2): # we add -2 and +2 here to make sure all positions at all orientations are included
             for orientation in range(falling_orientations):
-                board = copy.deepcopy(game_board)
+                board = originalBoard.deepBoardCopy()
                 board.falling_shape.orientation = orientation
                 board.falling_shape.move_to(column_position, 2)
 
@@ -62,7 +69,9 @@ class AI(object):
                     score = self.score_board(game_board, board)
                     if score > max_score:
                         max_score = score
-                        best_final_position = copy.deepcopy(board.falling_shape)
+                        best_final_column_position = board.falling_shape.column_position
+                        best_final_row_position = board.falling_shape.row_position
+                        best_final_orientation = board.falling_shape.orientation
 
                     if SHOW_AI:
                         board_drawer.stdscr.addstr(
@@ -73,7 +82,10 @@ class AI(object):
                         )
                         time.sleep(SHOW_AI_SPEED)
 
-        return best_final_position
+        #end = time.time()
+        #print(end-start)
+
+        return best_final_row_position, best_final_column_position, best_final_orientation
 
 
 def get_holes(this_board):
