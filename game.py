@@ -74,6 +74,8 @@ class Game(object):
             except GameOverError:
                 self.end_game()
                 return self.board.score
+
+        return None # should not get here
         
 
     def save_game(self):
@@ -88,9 +90,10 @@ class Game(object):
         """Ends the current game."""
         if self.displayScreen:
             self.board_drawer.return_screen_to_normal()
-        print('Game Over! Final Score: {}'.format(int(self.board.score)))
+        # prints to test return values
+        #print('Game Over! Final Score: {}'.format(int(self.board.score)))
         #print('Blocks placed: {}'.format(int(self.player.totalMoves)))
-        sys.exit(int(self.board.score))
+        #sys.exit(int(self.board.score))
 
     def start_ticking(self):
         self.last_tick = datetime.datetime.now()
