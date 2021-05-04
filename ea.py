@@ -5,12 +5,13 @@ from game import Game
 
 from players import AI
 
+PIECELIMIT = -1 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
 
 # Get score from weights
 def runTetris(weights = None):
     player = AI(weights)
     game = Game(player)
-    game.new_game()
+    game.new_game(pieceLimit = PIECELIMIT)
     return game.run_game()
 
 

@@ -43,10 +43,10 @@ class Game(object):
         
         
 
-    def new_game(self):
+    def new_game(self, pieceLimit=-1):
         """Initializes a new game."""
         self.last_tick = None
-        self.board = Board()
+        self.board = Board(pieceLimit=pieceLimit)
         if self.displayScreen:
             self.board_drawer = BoardDrawer()
             self.board_drawer.clear_score()

@@ -18,13 +18,12 @@ PREVIEW_ROW = 1
 BLOCK_WIDTH = 2
 BORDER_WIDTH = 1
 
-POINTS_PER_LINE = 20
-POINTS_PER_LEVEL = 200
-
+POINTS_PER_LINE = [0, 40, 100, 300, 1200]
 
 class Board(object):
     """Maintains the entire state of the game."""
-    def __init__(self, columns=None, rows=None):
+    def __init__(self, columns=None, rows=None, pieceLimit=-1):
+        self.pieceLimit = pieceLimit
         self.num_rows = rows or NUM_ROWS
         self.num_columns = columns or NUM_COLUMNS
         self.array = [[None for _ in range(self.num_columns)] for _ in range(self.num_rows)]
@@ -43,7 +42,7 @@ class Board(object):
 
 
     def deepBoardCopy(self):
-        newBoard = Board()
+        newBoard = Board(pieceLimit=self.pieceLimit)
         newBoard.falling_shape = self.falling_shape
         newBoard.next_shape = self.next_shape
         for r in range(self.num_rows):
@@ -91,11 +90,12 @@ class Board(object):
         self.falling_shape = self.next_shape
         self.falling_shape.move_to(STARTING_COLUMN, STARTING_ROW)
         self.next_tetromino()
-        if self.shape_cannot_be_placed(self.falling_shape):
+        if self.shape_cannot_be_placed(self.falling_shape) or self.pieceLimit == 0:
             self.next_shape = self.falling_shape
             self.falling_shape = None
             self.next_shape.move_to(PREVIEW_COLUMN, PREVIEW_ROW)
             self.end_game()
+        self.pieceLimit -= 1
 
     def remove_completed_lines(self):
         rows_removed = []
@@ -111,8 +111,7 @@ class Board(object):
                 for block in row:
                     self.array[block.row_position][block.column_position] = None
         if len(rows_removed) > 0:
-            points_earned = math.pow(2, len(rows_removed)-1) * POINTS_PER_LINE
-            self.score += points_earned
+            self.score += POINTS_PER_LINE[len(rows_removed)]
 
             for column_index in range(0, NUM_COLUMNS):
                 for row_index in range(lowest_row_removed, 0, -1):
