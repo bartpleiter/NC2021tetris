@@ -17,7 +17,7 @@ def runTetris(weights = None):
 
 def geneticAlgorithm():
     # TODO: currently just runs a single game with some hardcoded weights
-    weights = (-8, -18, -10.497, 16.432)
+    weights = (-1, -1, -1, 1)
     fitness = runTetris(weights)
     print("weights", weights, "gave a score of:", fitness)
 

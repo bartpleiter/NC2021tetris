@@ -7,6 +7,11 @@ import numpy as np
 import math
 import random
 import matplotlib.pyplot as plt
+from game import Game
+
+from players import AI
+
+PIECELIMIT = -1 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
 
 ########################
 # HYPER PARAMETERS
@@ -61,11 +66,19 @@ class SimpleEA:
         self.bestScoreList.append(max(self.fitnesses))
         self.bestWeightsList.append(self.population[self.fitnesses.index(max(self.fitnesses))])
 
+    # Get score from weights
+    def runTetris(self, weights = None):
+        player = AI(weights)
+        game = Game(player)
+        game.new_game(pieceLimit = PIECELIMIT)
+        return game.run_game()
 
     # calculate fitness of a specific instance of the population
     def calculateFitness(self, weights):
         #TODO 2, algorithm is going to play tetris and returns its score
-        fitness = sum(weights) #temp
+        #fitness = sum(weights) #temp
+        fitness = self.runTetris(tuple(weights))
+        print("weights", weights, "gave a score of:", fitness)
         return fitness
 
     # evaluates quality of each candidate by updating the fitnesses list
@@ -180,7 +193,7 @@ class SimpleEA:
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
-bleh = SimpleEA([0.5, 0.5, 0.5, 0.5, 0.5], 32, P_CROSSOVER, P_MUTATION, 100)
+bleh = SimpleEA([0.5, 0.5, 0.5, 0.5], 32, P_CROSSOVER, P_MUTATION, 10)
 bleh.runEA()
 #print(bleh.bestScoreList)
 #print(bleh.bestWeightsList)
