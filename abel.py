@@ -57,7 +57,7 @@ class SimpleEA:
             # STEP 1) append a random permutation of cities to population #TODO 1, how make initial population?
             tempweights = []
             for x in range(len(self.weights)):
-                tempweights.append(np.random.random())
+                tempweights.append(np.random.uniform(-1, 1))
             self.population.append(tempweights)
             # STEP 2) evaluate quality candidate
             self.fitnesses.append(self.calculateFitness(self.population[i]))
@@ -124,8 +124,8 @@ class SimpleEA:
 
     # apply mutation by swapping two random indices
     def doMutation(self, instance):
-        # choose two random points
-        instance[random.randrange(len(self.weights))] = np.random.random() #TODO random waarde die logisch is (mean, random waarde uit stddev, inverse, whatevs)
+        index = random.randrange(len(self.weights))
+        instance[index] = instance[index] * np.random.uniform(-2, 2)
         return instance
 
     # TODO
