@@ -6,6 +6,7 @@ import sys
 import numpy as np
 import math
 import random
+import concurrent.futures
 import matplotlib.pyplot as plt
 from game import Game
 
@@ -52,15 +53,20 @@ class SimpleEA:
         # population is represented by list of weights
         # also create list containing fitness for each instance (compute once)
         self.population = []
-        self.fitnesses = []
         for i in range(self.popsize):
             # STEP 1) append a random permutation of cities to population #TODO 1, how make initial population?
             tempweights = []
             for x in range(len(self.weights)):
                 tempweights.append(np.random.uniform(-1, 1))
             self.population.append(tempweights)
-            # STEP 2) evaluate quality candidate
-            self.fitnesses.append(self.calculateFitness(self.population[i]))
+        
+        #Step 2) evaluate quality candidate
+        self.fitnesses = []
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            for i in range(self.popsize):
+                fitness = executor.submit(self.calculateFitness, self.population[i])
+                return_value = fitness.result()
+                self.fitnesses.append(return_value)
 
         # add best result of initial population and the corresponding set of weights
         self.bestScoreList.append(max(self.fitnesses))
@@ -169,8 +175,11 @@ class SimpleEA:
                 
             # d: Evaluate the new candidates
             nextGenerationFitnesses = []
-            for c in range(self.popsize):
-                nextGenerationFitnesses.append(self.calculateFitness(nextGeneration[c]))
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                for c in range(self.popsize):
+                    fitness = executor.submit(self.calculateFitness, nextGeneration[c])
+                    return_value = fitness.result()
+                    nextGenerationFitnesses.append(return_value)
 
             # average fitness decrease. Not used, but can be interesting
             """
