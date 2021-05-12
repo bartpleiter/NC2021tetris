@@ -58,7 +58,7 @@ class SimpleEA:
             tempweights = []
             for x in range(len(self.weights)):
                 tempweights.append(np.random.uniform(-1, 1))
-            self.population.append(tempweights)
+            self.population.append(self.normalize(tempweights))
         
         #Step 2) evaluate quality candidate
         self.fitnesses = []
@@ -128,11 +128,20 @@ class SimpleEA:
         # return generated childs
         return child1, child2
 
+    def normalize(self, instance):
+        tempabs = []
+        for i in range(len(instance)):
+            tempabs.append(abs(instance[i]))
+        factor = tempabs[tempabs.index(max(tempabs))]
+        for i in range(len(instance)):
+            instance[i] = instance[i]/factor
+        return instance
+
     # apply mutation by swapping two random indices
     def doMutation(self, instance):
         index = random.randrange(len(self.weights))
         instance[index] = instance[index] * np.random.uniform(-2, 2)
-        return instance
+        return self.normalize(instance)
 
     # TODO
     # STEP 3: run algorithm until termination condition satisfied
