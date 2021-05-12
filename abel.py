@@ -62,11 +62,13 @@ class SimpleEA:
         
         #Step 2) evaluate quality candidate
         self.fitnesses = []
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        processList = []
+        with concurrent.futures.ProcessPoolExecutor() as executor:
             for i in range(self.popsize):
-                fitness = executor.submit(self.calculateFitness, self.population[i])
-                return_value = fitness.result()
-                self.fitnesses.append(return_value)
+                processList.append(executor.submit(self.calculateFitness, self.population[i]))
+                
+            for t in processList:
+                self.fitnesses.append(t.result())
 
         # add best result of initial population and the corresponding set of weights
         self.bestScoreList.append(max(self.fitnesses))
@@ -184,11 +186,12 @@ class SimpleEA:
                 
             # d: Evaluate the new candidates
             nextGenerationFitnesses = []
-            with concurrent.futures.ThreadPoolExecutor() as executor:
+            processList = []
+            with concurrent.futures.ProcessPoolExecutor() as executor:
                 for c in range(self.popsize):
-                    fitness = executor.submit(self.calculateFitness, nextGeneration[c])
-                    return_value = fitness.result()
-                    nextGenerationFitnesses.append(return_value)
+                    processList.append(executor.submit(self.calculateFitness, nextGeneration[c]))
+                for t in processList:
+                    nextGenerationFitnesses.append(t.result())
 
             # average fitness decrease. Not used, but can be interesting
             """
@@ -211,7 +214,7 @@ class SimpleEA:
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
-bleh = SimpleEA([0.5, 0.5, 0.5, 0.5], 32, P_CROSSOVER, P_MUTATION, 10)
+bleh = SimpleEA([0.5, 0.5, 0.5, 0.5], 100, P_CROSSOVER, P_MUTATION, 10)
 bleh.runEA()
 #print(bleh.bestScoreList)
 #print(bleh.bestWeightsList)
