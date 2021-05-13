@@ -64,13 +64,27 @@ def getBumpiness(board):
 #       is larger than its own height. The well depth is then the SMALLEST height difference between
 #       the column and its adjacent column
 # A well can NOT be a hole, we only look at the height of a column
-def getDeepWells(board):
-    return 0
+def getDeepWells(heights):
+    cumulativeWellDepth = 0
+    for i in range(len(heights)):
+        if i == 0:
+            wellDepth = heights[i+1] - heights[i]
+            if wellDepth>1:
+                cumulativeWellDepth += wellDepth
+        elif i == (len(heights)-1):
+            wellDepth = heights[len(heights)-2] - heights[len(heights)-1]
+            if wellDepth>1:
+                cumulativeWellDepth += wellDepth
+        else:
+            wellDepth = min(heights[i-1],heights[i+1]) - heights[i]
+            if wellDepth>1:
+                cumulativeWellDepth += wellDepth
+    return cumulativeWellDepth
 
 # (Abel)
 # Calculates the difference between the highest and lowest column height
-def getDeltaHeight(board):
-    return 0
+def getDeltaHeight(heights):
+    return (max(heights)-min(heights))
 
 
 #################
@@ -85,16 +99,16 @@ class AI(object):
     def score_board(self, original_board, this_board):
         ### hier dat ding uitrekenen met heights ofzo (Jasper)
         ### en dan meegeven aan de functies hieronder waar het nodig is
-
+        #heights = bla(board) ofzo
 
         this_board.printSelf()
 
         fullRows = getFullRows(this_board) # cleared lines 
         holes = getHoles(this_board) #  (Bart)
         holeDepth = getHoleDepth(this_board) # cumulative hole depth (Bart)
-        bumpiness = getBumpiness(this_board) # the sum of height differences between adjacent columns (Jasper)
-        deepWells = getDeepWells(this_board) # sum of well depths of depth > 1 (Abel)
-        deltaHeight = getDeltaHeight(this_board) # height difference between heighest and lowest (Abel)
+        bumpiness = getBumpiness(heights) # the sum of height differences between adjacent columns (Jasper)
+        deepWells = getDeepWells(heights) # sum of well depths of depth > 1 (Abel)
+        deltaHeight = getDeltaHeight(heights) # height difference between heighest and lowest (Abel)
 
 
         A, B, C, D, E, F = self.weights
