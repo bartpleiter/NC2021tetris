@@ -11,33 +11,64 @@ class Human(object):
         self.name = 'Human'
 
 
+def _cell_below_is_occupied(cell, board):
+    try:
+        return board[cell.row_position + 1][cell.column_position]
+    except IndexError:
+        return True
+
+def getFullRows(board):
+    return 1
+
+def getHoles(board):
+    return 1
+
+def getHoleDepth(board):
+    return 1
+
+def getBumpiness(board):
+    return 1
+
+def getDeepWells(board):
+    return 1
+
+def getDeltaHeight(board):
+    return 1
+
+
+
+
 class AI(object):
 
     def __init__(self, weights=None):
-        self.weights = weights or (-8, -18, -10.497, 16.432)
+        self.weights = weights or (1.0, -1.0, -0.3, -0.2, 3.0, -0.4)
         #self.totalMoves = 0
 
     def score_board(self, original_board, this_board):
         ### hier dat ding uitrekenen met heights ofzo (Jasper)
         ### en dan meegeven
 
-        # OLD STUFF TODO DELETEETETETE
-        #height_sum = get_height_sum(this_board)
-        #holes = get_holes(this_board)
-        #cumulative_holes = get_number_of_squares_above_holes(this_board)
-        #score_diff = this_board.score - original_board.score
+        this_board.printSelf()
+
+        fullRows = getFullRows(this_board) # cleared lines (Jasper)
+        holes = getHoles(this_board) # number of holes (Bart)
+        holeDepth = getHoleDepth(this_board) # cumulative hole depth (Bart)
+        bumpiness = getBumpiness(this_board) # the sum of height differences between adjacent columns (Jasper)
+        deepWells = getDeepWells(this_board) # sum of well depths of depth > 1 (Abel)
+        deltaHeight = getDeltaHeight(this_board) # height difference between heighest and lowest (Abel)
+
 
         A, B, C, D, E, F = self.weights
         score = (
-            (A * fullRows) + # cleared lines (Jasper)
-            (B * holes) + # number of holes (Bart)
-            (C * holeDepth) + # cumulative hole depth (Bart)
-            (D * bumpiness) + # the sum of height differences between adjacent columns (Jasper)
-            (E * deepWells) + # sum of well depths of depth > 1 (Abel)
-            (F * deltaHeight) # height difference between heighest and lowest (Abel)
+            (A * fullRows) +
+            (B * holes) +
+            (C * holeDepth) +
+            (D * bumpiness) +
+            (E * deepWells) +
+            (F * deltaHeight)
         )
         print("Score of board:", score)
-        exit(0)
+        print()
         return score
 
     def get_moves(self, game_board, board_drawer):
@@ -96,7 +127,8 @@ class AI(object):
         return best_final_row_position, best_final_column_position, best_final_orientation
 
 
-def get_holes(this_board):
+# OLD STUFF
+def old_get_holes(this_board):
     for yeet in this_board.array:
         print(yeet)
     #exit(0)
@@ -108,7 +140,7 @@ def get_holes(this_board):
     return hole_count
 
 
-def get_number_of_squares_above_holes(this_board):
+def old_get_number_of_squares_above_holes(this_board):
     count = 0
     for column in range(this_board.num_columns):
         saw_hole = False
@@ -121,13 +153,5 @@ def get_number_of_squares_above_holes(this_board):
                 saw_hole = True
     return count
 
-
-def _cell_below_is_occupied(cell, board):
-    try:
-        return board[cell.row_position + 1][cell.column_position]
-    except IndexError:
-        return True
-
-
-def get_height_sum(this_board):
+def old_get_height_sum(this_board):
     return sum([20 - val.row_position for row in this_board.array for val in row if val])

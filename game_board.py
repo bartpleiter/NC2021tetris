@@ -51,6 +51,15 @@ class Board(object):
                     newBoard.array[r][c] = self.array[r][c].getDeepCopy()
         return newBoard
 
+    def printSelf(self):
+        for row in self.array:
+            for block in row:
+                if block:
+                    print("[]", end='')
+                else:
+                    print("__", end='')
+            print()
+
 
     def shuffle_bag(self):
         random.shuffle(self.bag)
