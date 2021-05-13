@@ -18,18 +18,26 @@ class AI(object):
         #self.totalMoves = 0
 
     def score_board(self, original_board, this_board):
-        height_sum = get_height_sum(this_board)
-        holes = get_holes(this_board)
-        cumulative_holes = get_number_of_squares_above_holes(this_board)
-        score_diff = this_board.score - original_board.score
+        ### hier dat ding uitrekenen met heights ofzo (Jasper)
+        ### en dan meegeven
 
-        A, B, C, D = self.weights
+        # OLD STUFF TODO DELETEETETETE
+        #height_sum = get_height_sum(this_board)
+        #holes = get_holes(this_board)
+        #cumulative_holes = get_number_of_squares_above_holes(this_board)
+        #score_diff = this_board.score - original_board.score
+
+        A, B, C, D, E, F = self.weights
         score = (
-            (A * height_sum) +
-            (B * holes) +
-            (C * cumulative_holes) +
-            (D * score_diff)
+            (A * fullRows) + # cleared lines (Jasper)
+            (B * holes) + # number of holes (Bart)
+            (C * holeDepth) + # cumulative hole depth (Bart)
+            (D * bumpiness) + # the sum of height differences between adjacent columns (Jasper)
+            (E * deepWells) + # sum of well depths of depth > 1 (Abel)
+            (F * deltaHeight) # height difference between heighest and lowest (Abel)
         )
+        print("Score of board:", score)
+        exit(0)
         return score
 
     def get_moves(self, game_board, board_drawer):
@@ -89,6 +97,9 @@ class AI(object):
 
 
 def get_holes(this_board):
+    for yeet in this_board.array:
+        print(yeet)
+    #exit(0)
     hole_count = 0
     for row in this_board.array:
         for cell in row:
