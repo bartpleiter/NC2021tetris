@@ -53,8 +53,8 @@ class Board(object):
 
     def printSelf(self):
         for row in self.array:
-            for block in row:
-                if block:
+            for cell in row:
+                if cell:
                     print("[]", end='')
                 else:
                     print("__", end='')

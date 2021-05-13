@@ -1,57 +1,96 @@
 import time
 import curses
-from game_board import NUM_COLUMNS, BORDER_WIDTH, BLOCK_WIDTH, PREVIEW_COLUMN
+from game_board import NUM_COLUMNS, NUM_ROWS, BORDER_WIDTH, BLOCK_WIDTH, PREVIEW_COLUMN
 
 SHOW_AI = False
 SHOW_AI_SPEED = 0.01
 AI_DISPLAY_SCREEN = False
 
-class Human(object):
-    def __init__(self):
-        self.name = 'Human'
+##########################
+# FEATURES/SCORE FUNCTIONS
+##########################
 
-
-def _cell_below_is_occupied(cell, board):
-    try:
-        return board[cell.row_position + 1][cell.column_position]
-    except IndexError:
-        return True
-
+# (Jasper)
+# Calculates the number of full horizontal rows
 def getFullRows(board):
-    return 1
+    return 0
 
+# (Bart)
+# Calculates the number of holes in each column (so a hole that spans over two columns count as two).
+# Holes of multiple cells deep count as a single hole
 def getHoles(board):
-    return 1
+    holes = 0
+    for r, row in enumerate(board.array):
+        if r > 0: # ceiling does not count!
+            for c, cell in enumerate(row):
+                if not cell and board.array[r-1][c]: # index always safe, because the top row is skipped
+                    holes += 1
+    print("Holes:", holes)
+    return holes
 
+# (Bart)
+# Calculates the cumulative hole depth
+# This is calculated by looking at the highest block, and counting the empty cells below (with a block above), 
+#   each multiplied by the depth relative to this highest block
+# Deep holes are only counted once (based on their top height, by only counting empty cells with a block above
 def getHoleDepth(board):
-    return 1
+    cumulativeHoleDepth = 0
+    for c in range(NUM_COLUMNS): # for each column
+        foundBlock = False
+        blockHeight = 0 # used for calculating the hole depth
+        for r in range(NUM_ROWS): # for each row
+            if not foundBlock: # first we need to find the highest block
+                if board.array[r][c]:
+                    foundBlock = True
+                    blockHeight = NUM_ROWS - r
+            else: # if we found a block already, we are counting holes
+                if not board.array[r][c]: # found a hole
+                    if r > 0 and board.array[r-1][c]: # only count deep holes once, r>0 is just for safety although not needed
+                        cumulativeHoleDepth += blockHeight - (NUM_ROWS - r)
 
+    print("holeDepth:", cumulativeHoleDepth)
+    return cumulativeHoleDepth
+
+# (Jasper)
+# Calculates the bumpiness of the field
+# This is done by summing the height difference between each adjacent column, walls not included!
 def getBumpiness(board):
-    return 1
+    return 0
 
+# (Abel)
+# Calculates the cumulative well depth of wells deeper than 1
+# A well is defined as follows:
+#   A column has a well if the height of the left AND right adjacent column (walls included),
+#       is larger than its own height. The well depth is then the SMALLEST height difference between
+#       the column and its adjacent column
+# A well can NOT be a hole, we only look at the height of a column
 def getDeepWells(board):
-    return 1
+    return 0
 
+# (Abel)
+# Calculates the difference between the highest and lowest column height
 def getDeltaHeight(board):
-    return 1
+    return 0
 
 
-
+#################
+# AI CODE
+#################
 
 class AI(object):
 
     def __init__(self, weights=None):
-        self.weights = weights or (1.0, -1.0, -0.3, -0.2, 3.0, -0.4)
-        #self.totalMoves = 0
+        self.weights = weights or (1.0, -1.0, -0.5, -0.5, 0.5, -0.5)
 
     def score_board(self, original_board, this_board):
         ### hier dat ding uitrekenen met heights ofzo (Jasper)
-        ### en dan meegeven
+        ### en dan meegeven aan de functies hieronder waar het nodig is
+
 
         this_board.printSelf()
 
-        fullRows = getFullRows(this_board) # cleared lines (Jasper)
-        holes = getHoles(this_board) # number of holes (Bart)
+        fullRows = getFullRows(this_board) # cleared lines 
+        holes = getHoles(this_board) #  (Bart)
         holeDepth = getHoleDepth(this_board) # cumulative hole depth (Bart)
         bumpiness = getBumpiness(this_board) # the sum of height differences between adjacent columns (Jasper)
         deepWells = getDeepWells(this_board) # sum of well depths of depth > 1 (Abel)
@@ -72,7 +111,6 @@ class AI(object):
         return score
 
     def get_moves(self, game_board, board_drawer):
-        #self.totalMoves += 1
         #start = time.time()
         max_score = -100000
 
@@ -122,16 +160,13 @@ class AI(object):
                         time.sleep(SHOW_AI_SPEED)
 
         #end = time.time()
-        #print(end-start)
+        #print("Time used to find a placement:", end-start)
 
         return best_final_row_position, best_final_column_position, best_final_orientation
 
 
-# OLD STUFF
+# OLD STUFF, can be deleted when other features are implemented
 def old_get_holes(this_board):
-    for yeet in this_board.array:
-        print(yeet)
-    #exit(0)
     hole_count = 0
     for row in this_board.array:
         for cell in row:
@@ -155,3 +190,7 @@ def old_get_number_of_squares_above_holes(this_board):
 
 def old_get_height_sum(this_board):
     return sum([20 - val.row_position for row in this_board.array for val in row if val])
+
+class Human(object):
+    def __init__(self):
+        self.name = 'Human'
