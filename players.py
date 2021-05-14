@@ -13,7 +13,11 @@ AI_DISPLAY_SCREEN = False
 # (Jasper)
 # Calculates the number of full horizontal rows
 def getFullRows(board):
-    return 0
+    rows = 0
+    for row in board.array:
+            if all(row):
+                rows += 1
+    return rows
 
 # (Bart)
 # Calculates the number of holes in each column (so a hole that spans over two columns count as two).
@@ -54,8 +58,11 @@ def getHoleDepth(board):
 # (Jasper)
 # Calculates the bumpiness of the field
 # This is done by summing the height difference between each adjacent column, walls not included!
-def getBumpiness(board):
-    return 0
+def getBumpiness(heights):
+    bumpiness = 0
+    for i in range(len(heights)-1):
+        bumpiness += abs(heights[i] - heights[i+1])
+    return bumpiness
 
 # (Abel)
 # Calculates the cumulative well depth of wells deeper than 1
@@ -86,6 +93,14 @@ def getDeepWells(heights):
 def getDeltaHeight(heights):
     return (max(heights)-min(heights))
 
+# Calculates the heights of the columns on the board for easier and more efficient calculations
+def getHeights(board):
+    heights = [0] * board.num_columns
+    for r in range (board.num_rows):
+        for c in range (board.num_columns):
+            if board.array[board.num_rows - 1 - r][c] is not None:
+                heights[c] = r+1
+    return heights
 
 #################
 # AI CODE
@@ -97,10 +112,7 @@ class AI(object):
         self.weights = weights or (1.0, -1.0, -0.5, -0.5, 0.5, -0.5)
 
     def score_board(self, original_board, this_board):
-        ### hier dat ding uitrekenen met heights ofzo (Jasper)
-        ### en dan meegeven aan de functies hieronder waar het nodig is
-        #heights = bla(board) ofzo
-
+        heights = getHeights(this_board)
         this_board.printSelf()
 
         fullRows = getFullRows(this_board) # cleared lines 
