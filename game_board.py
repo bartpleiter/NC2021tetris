@@ -150,6 +150,12 @@ class Board(object):
                 self.array[block.row_position][block.column_position] = block
         self.remove_completed_lines()
 
+    def _settle_shape_no_clear(self, shape):
+        """Adds shape to settled pieces array. does not remove completed lines"""
+        if shape:
+            for block in shape.blocks:
+                self.array[block.row_position][block.column_position] = block
+
     def move_shape_left(self):
         """When the user hits the left arrow."""
         if self.falling_shape:

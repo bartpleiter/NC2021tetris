@@ -5,6 +5,7 @@ from game_board import NUM_COLUMNS, NUM_ROWS, BORDER_WIDTH, BLOCK_WIDTH, PREVIEW
 SHOW_AI = False
 SHOW_AI_SPEED = 0.01
 AI_DISPLAY_SCREEN = False
+DEBUG_SCORE = False
 
 ##########################
 # FEATURES/SCORE FUNCTIONS
@@ -15,8 +16,10 @@ AI_DISPLAY_SCREEN = False
 def getFullRows(board):
     rows = 0
     for row in board.array:
-            if all(row):
-                rows += 1
+        if all(row):
+            rows += 1
+    if DEBUG_SCORE:
+        print("Rows:", rows)
     return rows
 
 # (Bart)
@@ -29,7 +32,8 @@ def getHoles(board):
             for c, cell in enumerate(row):
                 if not cell and board.array[r-1][c]: # index always safe, because the top row is skipped
                     holes += 1
-    print("Holes:", holes)
+    if DEBUG_SCORE:
+        print("Holes:", holes)
     return holes
 
 # (Bart)
@@ -52,7 +56,8 @@ def getHoleDepth(board):
                     if r > 0 and board.array[r-1][c]: # only count deep holes once, r>0 is just for safety although not needed
                         cumulativeHoleDepth += blockHeight - (NUM_ROWS - r)
 
-    print("holeDepth:", cumulativeHoleDepth)
+    if DEBUG_SCORE:
+        print("holeDepth:", cumulativeHoleDepth)
     return cumulativeHoleDepth
 
 # (Jasper)
@@ -62,6 +67,8 @@ def getBumpiness(heights):
     bumpiness = 0
     for i in range(len(heights)-1):
         bumpiness += abs(heights[i] - heights[i+1])
+    if DEBUG_SCORE:
+        print("bumpiness:", bumpiness)
     return bumpiness
 
 # (Abel)
@@ -86,12 +93,17 @@ def getDeepWells(heights):
             wellDepth = min(heights[i-1],heights[i+1]) - heights[i]
             if wellDepth>1:
                 cumulativeWellDepth += wellDepth
+    if DEBUG_SCORE:
+        print("Deep wells:", cumulativeWellDepth)
     return cumulativeWellDepth
 
 # (Abel)
 # Calculates the difference between the highest and lowest column height
 def getDeltaHeight(heights):
-    return (max(heights)-min(heights))
+    deltaHeight = (max(heights)-min(heights))
+    if DEBUG_SCORE:
+        print("deltaHeight:", deltaHeight)
+    return deltaHeight
 
 # Calculates the heights of the columns on the board for easier and more efficient calculations
 def getHeights(board):
@@ -113,7 +125,8 @@ class AI(object):
 
     def score_board(self, original_board, this_board):
         heights = getHeights(this_board)
-        this_board.printSelf()
+        if DEBUG_SCORE:
+            this_board.printSelf()
 
         fullRows = getFullRows(this_board) # cleared lines 
         holes = getHoles(this_board) #  (Bart)
@@ -132,8 +145,9 @@ class AI(object):
             (E * deepWells) +
             (F * deltaHeight)
         )
-        print("Score of board:", score)
-        print()
+        if DEBUG_SCORE:
+            print("Score of board:", score)
+            print()
         return score
 
     def get_moves(self, game_board, board_drawer):
@@ -167,7 +181,7 @@ class AI(object):
                         board_drawer.update_shadow(board)
                         board_drawer.refresh_screen()
 
-                    board._settle_shape(board.falling_shape)
+                    board._settle_shape_no_clear(board.falling_shape)
 
                     score = self.score_board(game_board, board)
                     if score > max_score:

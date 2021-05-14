@@ -214,7 +214,7 @@ class SimpleEA:
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
-bleh = SimpleEA([0.5, -0.5, -0.5, -0.5, -0.5, -0.5], 100, P_CROSSOVER, P_MUTATION, 10)
+bleh = SimpleEA([0.5, -0.5, -0.5, -0.5, -0.5, -0.5], 64, P_CROSSOVER, P_MUTATION, 32)
 bleh.runEA()
 #print(bleh.bestScoreList)
 #print(bleh.bestWeightsList)
