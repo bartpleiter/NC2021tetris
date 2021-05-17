@@ -2,9 +2,9 @@ import time
 import curses
 from game_board import NUM_COLUMNS, NUM_ROWS, BORDER_WIDTH, BLOCK_WIDTH, PREVIEW_COLUMN
 
-SHOW_AI = True
+SHOW_AI = False
 SHOW_AI_SPEED = 0.01
-AI_DISPLAY_SCREEN = True
+AI_DISPLAY_SCREEN = False
 DEBUG_SCORE = False
 
 ##########################
