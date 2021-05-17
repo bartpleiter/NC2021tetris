@@ -12,15 +12,15 @@ from game import Game
 
 from players import AI
 
-PIECELIMIT = -1 #500 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
+PIECELIMIT = 2000 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
 
 ########################
 # HYPER PARAMETERS
 ########################
 P_MUTATION = 0.1 # mutation probability
 P_CROSSOVER = 0.5 # crossover probability
-P_POPULATIONSIZE = 32
-P_GENERATIONS = 10 
+P_POPULATIONSIZE = 100 # must be even
+P_GENERATIONS = 32 
 
 """
 ########################
@@ -147,7 +147,7 @@ class SimpleEA:
     # apply mutation by swapping two random indices
     def doMutation(self, instance):
         index = random.randrange(len(self.weights))
-        instance[index] = instance[index] * np.random.uniform(-2, 2)
+        instance[index] = instance[index] * np.random.uniform(-1.5, 1.5)
         return self.normalize(instance)
 
     def printGeneration(self, generation):
@@ -157,6 +157,23 @@ class SimpleEA:
         print("Average score for generation", generation, ":", int(np.mean(self.fitnesses)))
         print("-------------------------")
 
+    def doBinaryTournamentWithoutReplacement(self):
+        returnList = []
+
+        shuffledPopulation = list(range(P_POPULATIONSIZE))
+        random.shuffle(shuffledPopulation)
+
+        firstHalf = shuffledPopulation[:len(shuffledPopulation)//2]
+        secondHalf = shuffledPopulation[len(shuffledPopulation)//2:]
+
+        for first, second in zip(firstHalf, secondHalf):
+            if self.fitnesses[first] > self.fitnesses[second]:
+                returnList.append(self.population[first])
+            else:
+                returnList.append(self.population[second])
+
+        return returnList
+
     # TODO
     # STEP 3: run algorithm until termination condition satisfied
     def runEA(self):
@@ -165,8 +182,11 @@ class SimpleEA:
 
             print("Starting generation:", generation);
 
-            nextGeneration = [] # list containing the next generation
-            # fill the next generation
+            # list containing the next generation, prefilled with winners of binary tournament
+            nextGeneration = self.doBinaryTournamentWithoutReplacement() 
+            
+
+            # fill the rest of the next generation
             while len(nextGeneration) < self.popsize:
 
                 # a: Select (two) candidate solutions for reproduction

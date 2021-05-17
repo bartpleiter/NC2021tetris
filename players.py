@@ -2,9 +2,9 @@ import time
 import curses
 from game_board import NUM_COLUMNS, NUM_ROWS, BORDER_WIDTH, BLOCK_WIDTH, PREVIEW_COLUMN
 
-SHOW_AI = False
+SHOW_AI = True
 SHOW_AI_SPEED = 0.01
-AI_DISPLAY_SCREEN = False
+AI_DISPLAY_SCREEN = True
 DEBUG_SCORE = False
 
 ##########################
@@ -121,7 +121,7 @@ def getHeights(board):
 class AI(object):
 
     def __init__(self, weights=None):
-        self.weights = weights or (1.0, -1.0, -0.13, -0.16, 0.01, -0.06)
+        self.weights = weights or (0.679, -0.944, -0.248, -0.265, -0.034, 0.037)
 
     def score_board(self, original_board, this_board):
         heights = getHeights(this_board)
