@@ -18,7 +18,7 @@ PREVIEW_ROW = 1
 BLOCK_WIDTH = 2
 BORDER_WIDTH = 1
 
-POINTS_PER_LINE = [0, 40, 100, 300, 1200]
+POINTS_PER_LINE = [0, 40, 100, 300, 1200] # [0,1,2,3,4]
 
 class Board(object):
     """Maintains the entire state of the game."""

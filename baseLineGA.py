@@ -12,13 +12,15 @@ from game import Game
 
 from players import AI
 
-PIECELIMIT = -1 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
+PIECELIMIT = -1 #500 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
 
 ########################
 # HYPER PARAMETERS
 ########################
 P_MUTATION = 0.1 # mutation probability
 P_CROSSOVER = 0.5 # crossover probability
+P_POPULATIONSIZE = 32
+P_GENERATIONS = 10 
 
 """
 ########################
@@ -40,12 +42,12 @@ Steps (you can see them back in the code below):
 class SimpleEA:
 
     # constructor
-    def __init__(self, weights, popsize = 50, poffspring = 0.7, pmut = 0.1, termiterations = 10):
+    def __init__(self, weights, popsize = 50, poffspring = 0.7, pmut = 0.1, termgeneration = 10):
         self.weights = weights # list of weights, represented by a list containing weight values
         self.popsize = popsize # population size
         self.poffspring = poffspring # offspring probability
         self.pmut = pmut # mutation probability
-        self.termiterations = termiterations # number of iterations until termination
+        self.termgeneration = termgeneration # number of generation until termination
         self.bestScoreList = []
         self.bestWeightsList = []
 
@@ -60,6 +62,7 @@ class SimpleEA:
                 tempweights.append(np.random.uniform(-1, 1))
             self.population.append(self.normalize(tempweights))
         
+        print("Starting generation: 0");
         #Step 2) evaluate quality candidate
         self.fitnesses = []
         processList = []
@@ -74,6 +77,8 @@ class SimpleEA:
         self.bestScoreList.append(max(self.fitnesses))
         self.bestWeightsList.append(self.population[self.fitnesses.index(max(self.fitnesses))])
 
+        self.printGeneration(0)
+
     # Get score from weights
     def runTetris(self, weights = None):
         player = AI(weights)
@@ -86,7 +91,7 @@ class SimpleEA:
         #TODO 2, algorithm is going to play tetris and returns its score
         #fitness = sum(weights) #temp
         fitness = self.runTetris(tuple(weights))
-        print("weights", weights, "gave a score of:", fitness)
+        #print("weights", weights, "gave a score of:", fitness)
         return fitness
 
     # evaluates quality of each candidate by updating the fitnesses list
@@ -145,11 +150,20 @@ class SimpleEA:
         instance[index] = instance[index] * np.random.uniform(-2, 2)
         return self.normalize(instance)
 
+    def printGeneration(self, generation):
+        # Print generation results
+        print("Best score for generation", generation, ":", max(self.fitnesses))
+        print(" using weights:", [ '%.3f' % w for w in self.population[self.fitnesses.index(max(self.fitnesses))] ])
+        print("Average score for generation", generation, ":", int(np.mean(self.fitnesses)))
+        print("-------------------------")
+
     # TODO
     # STEP 3: run algorithm until termination condition satisfied
     def runEA(self):
-        iterations = 0
-        while iterations < self.termiterations:
+        generation = 1
+        while generation < self.termgeneration:
+
+            print("Starting generation:", generation);
 
             nextGeneration = [] # list containing the next generation
             # fill the next generation
@@ -208,16 +222,19 @@ class SimpleEA:
             self.bestScoreList.append(max(self.fitnesses))
             self.bestWeightsList.append(self.population[self.fitnesses.index(max(self.fitnesses))])
 
+            self.printGeneration(generation)
+
             # done with iteration
-            iterations += 1
+            generation += 1
 
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
-bleh = SimpleEA([0.5, -0.5, -0.5, -0.5, -0.5, -0.5], 64, P_CROSSOVER, P_MUTATION, 32)
+bleh = SimpleEA([None]*6, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS)
 bleh.runEA()
 #print(bleh.bestScoreList)
 #print(bleh.bestWeightsList)
 
-print(max(bleh.bestScoreList))
-print(bleh.bestWeightsList[bleh.bestScoreList.index(max(bleh.bestScoreList))])
+print("Final results:")
+print("Max score:", max(bleh.bestScoreList))
+print("Weights to get best score:", [ '%.4f' % w for w in bleh.bestWeightsList[bleh.bestScoreList.index(max(bleh.bestScoreList))] ])

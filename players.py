@@ -121,7 +121,7 @@ def getHeights(board):
 class AI(object):
 
     def __init__(self, weights=None):
-        self.weights = weights or (1.0, -1.0, -0.5, -0.5, 0.5, -0.5)
+        self.weights = weights or (1.0, -1.0, -0.13, -0.16, 0.01, -0.06)
 
     def score_board(self, original_board, this_board):
         heights = getHeights(this_board)
