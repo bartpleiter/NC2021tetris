@@ -150,11 +150,23 @@ class SimpleEA:
         instance[index] = instance[index] * np.random.uniform(-1.5, 1.5)
         return self.normalize(instance)
 
+    def averageWeights(self):
+        averageweights = []
+        for i in range(len(self.population[0])):
+           averageweights.append(0)
+        for w in self.population:
+            for i in range(len(w)):
+                averageweights[i] += w[i]
+        for i in range(len(averageweights)):
+            averageweights[i] = averageweights[i]/len(self.population)
+        return averageweights
+
     def printGeneration(self, generation):
         # Print generation results
         print("Best score for generation", generation, ":", max(self.fitnesses))
         print(" using weights:", [ '%.3f' % w for w in self.population[self.fitnesses.index(max(self.fitnesses))] ])
         print("Average score for generation", generation, ":", int(np.mean(self.fitnesses)))
+        print("Average weights for generation", generation, ":",  averageWeights() )
         print("-------------------------")
 
     def doBinaryTournamentWithoutReplacement(self):
