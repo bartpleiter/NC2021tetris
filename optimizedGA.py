@@ -179,7 +179,7 @@ class SimpleEA:
     def eliteSelection(self, best, good):
         returnList = []
 
-        sortedFitnesses = sort(self.fitnesses)
+        sortedFitnesses = sorted(self.fitnesses, reverse=True)
         while len(returnList) < best:
             returnList.append(self.population[self.fitnesses.index(sortedFitnesses[len(returnList)])])
 
