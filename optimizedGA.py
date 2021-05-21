@@ -22,6 +22,9 @@ P_MUTATION = 0.1 # mutation probability
 P_CROSSOVER = 0.5 # crossover probability
 P_POPULATIONSIZE = 100 # must be even
 P_GENERATIONS = 32 
+P_MUTATIONREDUCTION = True
+P_BESTAMOUNT = 5
+P_GOODAMOUNT = 25
 
 """
 ########################
@@ -43,13 +46,15 @@ Steps (you can see them back in the code below):
 class SimpleEA:
 
     # constructor
-    def __init__(self, weights, popsize = 50, poffspring = 0.7, pmut = 0.1, termgeneration = 10, reduceMutationRate = True):
+    def __init__(self, weights, popsize = 100, poffspring = 0.5, pmut = 0.1, termgeneration = 10, reduceMutationRate = True, numberOfBest = 5, numberOfGood = 25):
         self.weights = weights # list of weights, represented by a list containing weight values
         self.popsize = popsize # population size
         self.poffspring = poffspring # offspring probability
         self.pmut = pmut # mutation probability
         self.termgeneration = termgeneration # number of generation until termination
         self.reduceMutationRate = reduceMutationRate # Whether or not the algorithm will use reducing mutation rate.
+        self.numberOfBest = numberOfBest # Number of the best of population taken to next generation
+        self.numberOfGood = numberOfGood # Number of the best + other good of population taken to next generation
         self.bestScoreList = []
         self.bestWeightsList = []
 
@@ -171,23 +176,15 @@ class SimpleEA:
         print("Average weights for generation", generation, ":",  [ '%.3f' % w for w in self.averageWeights() ])
         print("-------------------------")
 
-    def doStuff(self, percentage):
-        pass
-
-    def doBinaryTournamentWithoutReplacement(self):
+    def eliteSelection(self, best, good):
         returnList = []
 
-        shuffledPopulation = list(range(P_POPULATIONSIZE))
-        random.shuffle(shuffledPopulation)
+        sortedFitnesses = sort(self.fitnesses)
+        while len(returnList) < best:
+            returnList.append(self.population[self.fitnesses.index(sortedFitnesses[len(returnList)])])
 
-        firstHalf = shuffledPopulation[:len(shuffledPopulation)//2]
-        secondHalf = shuffledPopulation[len(shuffledPopulation)//2:]
-
-        for first, second in zip(firstHalf, secondHalf):
-            if self.fitnesses[first] > self.fitnesses[second]:
-                returnList.append(self.population[first])
-            else:
-                returnList.append(self.population[second])
+        while len(returnList) < good:
+            returnList.append(self.population[self.binaryTournamentSelect()])
 
         return returnList
 
@@ -200,7 +197,7 @@ class SimpleEA:
             print("Starting generation:", generation);
 
             # list containing the next generation, prefilled with winners of binary tournament
-            nextGeneration = self.doBinaryTournamentWithoutReplacement() 
+            nextGeneration = self.eliteSelection(self.numberOfBest, self.numberOfGood)
             
 
             # fill the rest of the next generation
@@ -273,7 +270,7 @@ class SimpleEA:
         return self.bestScoreList
 
 start = time.time()
-bleh = SimpleEA([None]*6, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS)
+bleh = SimpleEA([None]*6, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT)
 bleh.runEA()
 end = time.time()
 print("Running time:", end-start, "seconds")
