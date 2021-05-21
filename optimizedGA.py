@@ -43,12 +43,13 @@ Steps (you can see them back in the code below):
 class SimpleEA:
 
     # constructor
-    def __init__(self, weights, popsize = 50, poffspring = 0.7, pmut = 0.1, termgeneration = 10):
+    def __init__(self, weights, popsize = 50, poffspring = 0.7, pmut = 0.1, termgeneration = 10, reduceMutationRate = True):
         self.weights = weights # list of weights, represented by a list containing weight values
         self.popsize = popsize # population size
         self.poffspring = poffspring # offspring probability
         self.pmut = pmut # mutation probability
         self.termgeneration = termgeneration # number of generation until termination
+        self.reduceMutationRate = reduceMutationRate # Whether or not the algorithm will use reducing mutation rate.
         self.bestScoreList = []
         self.bestWeightsList = []
 
@@ -221,11 +222,16 @@ class SimpleEA:
                     child2 = self.population[parent2]
 
                 # c: Mutate the resulting candidates with probability
-                if random.random() < self.pmut:
-                    child1 = self.doMutation(child1)
-
-                if random.random() < self.pmut:
-                    child2 = self.doMutation(child2)
+                if(self.reduceMutationRate):
+                    if random.random() < (self.pmut * (self.termgeneration-generation)/self.termgeneration):
+                        child1 = self.doMutation(child1)
+                    if random.random() < (self.pmut * (self.termgeneration-generation)/self.termgeneration):
+                        child2 = self.doMutation(child2)
+                else:
+                    if random.random() < self.pmut:
+                        child1 = self.doMutation(child1)
+                    if random.random() < self.pmut:
+                        child2 = self.doMutation(child2)
 
                 # add to next generation intermediate list
                 # unless list is already full (in case of odd population size number)
