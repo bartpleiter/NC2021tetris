@@ -9,18 +9,19 @@ import random
 import concurrent.futures
 import matplotlib.pyplot as plt
 from game import Game
+import time
 
 from players import AI
 
-PIECELIMIT = -1 #500 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
+PIECELIMIT = 2000 #500 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
 
 ########################
 # HYPER PARAMETERS
 ########################
 P_MUTATION = 0.1 # mutation probability
 P_CROSSOVER = 0.5 # crossover probability
-P_POPULATIONSIZE = 32
-P_GENERATIONS = 10 
+P_POPULATIONSIZE = 100
+P_GENERATIONS = 32 
 
 """
 ########################
@@ -166,7 +167,7 @@ class SimpleEA:
         print("Best score for generation", generation, ":", max(self.fitnesses))
         print(" using weights:", [ '%.3f' % w for w in self.population[self.fitnesses.index(max(self.fitnesses))] ])
         print("Average score for generation", generation, ":", int(np.mean(self.fitnesses)))
-        print("Average weights for generation", generation, ":",  averageWeights() )
+        print("Average weights for generation", generation, ":",  [ '%.3f' % w for w in self.averageWeights() ])
         print("-------------------------")
 
     # TODO
@@ -242,8 +243,11 @@ class SimpleEA:
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
+start = time.time()
 bleh = SimpleEA([None]*6, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS)
 bleh.runEA()
+end = time.time()
+print("Running time:", end-start, "seconds")
 #print(bleh.bestScoreList)
 #print(bleh.bestWeightsList)
 

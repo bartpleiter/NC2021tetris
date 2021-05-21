@@ -3,7 +3,7 @@ import curses
 from game_board import NUM_COLUMNS, NUM_ROWS, BORDER_WIDTH, BLOCK_WIDTH, PREVIEW_COLUMN
 
 SHOW_AI = False
-SHOW_AI_SPEED = 0.01
+SHOW_AI_SPEED = 0.05
 AI_DISPLAY_SCREEN = False
 DEBUG_SCORE = False
 
@@ -121,7 +121,7 @@ def getHeights(board):
 class AI(object):
 
     def __init__(self, weights=None):
-        self.weights = weights or (0.679, -0.944, -0.248, -0.265, -0.034, 0.037)
+        self.weights = weights or (0.91085795, -1.14138722, -0.11095269, -0.21057699, -0.02961168, 0.02429384)
 
     def score_board(self, original_board, this_board):
         heights = getHeights(this_board)
@@ -194,7 +194,7 @@ class AI(object):
                         board_drawer.stdscr.addstr(
                             BORDER_WIDTH + 14,
                             PREVIEW_COLUMN*BLOCK_WIDTH-2+BORDER_WIDTH,
-                            'PLACEMENT SCORE: %d' % score,
+                            'PLACEMENT SCORE: %f' % score,
                             curses.color_pair(7)
                         )
                         time.sleep(SHOW_AI_SPEED)
