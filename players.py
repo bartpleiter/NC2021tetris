@@ -11,7 +11,6 @@ DEBUG_SCORE = False
 # FEATURES/SCORE FUNCTIONS
 ##########################
 
-# (Jasper)
 # Calculates the number of full horizontal rows
 def getFullRows(board):
     rows = 0
@@ -22,7 +21,6 @@ def getFullRows(board):
         print("Rows:", rows)
     return rows
 
-# (Bart)
 # Calculates the number of holes in each column (so a hole that spans over two columns count as two).
 # Holes of multiple cells deep count as a single hole
 def getHoles(board):
@@ -36,7 +34,6 @@ def getHoles(board):
         print("Holes:", holes)
     return holes
 
-# (Bart)
 # Calculates the cumulative hole depth
 # This is calculated by looking at the highest block, and counting the empty cells below (with a block above), 
 #   each multiplied by the depth relative to this highest block
@@ -60,7 +57,6 @@ def getHoleDepth(board):
         print("holeDepth:", cumulativeHoleDepth)
     return cumulativeHoleDepth
 
-# (Jasper)
 # Calculates the bumpiness of the field
 # This is done by summing the height difference between each adjacent column, walls not included!
 def getBumpiness(heights):
@@ -71,7 +67,6 @@ def getBumpiness(heights):
         print("bumpiness:", bumpiness)
     return bumpiness
 
-# (Abel)
 # Calculates the cumulative well depth of wells deeper than 1
 # A well is defined as follows:
 #   A column has a well if the height of the left AND right adjacent column (walls included),
@@ -97,7 +92,47 @@ def getDeepWells(heights):
         print("Deep wells:", cumulativeWellDepth)
     return cumulativeWellDepth
 
-# (Abel)
+# Calculates the cumulative well depth of all wells with depth 1
+# A well is defined as follows:
+#   A column has a well if the height of the left AND right adjacent column (walls included),
+#       is larger than its own height. The well depth is then the SMALLEST height difference between
+#       the column and its adjacent column
+# A well can NOT be a hole, we only look at the height of a column
+def getShallowWells(heights):
+    shallowWells = 0
+    for i in range(len(heights)):
+        if i == 0:
+            wellDepth = heights[i+1] - heights[i]
+            if wellDepth == 1:
+                shallowWells += 1
+        elif i == (len(heights)-1):
+            wellDepth = heights[len(heights)-2] - heights[len(heights)-1]
+            if wellDepth == 1:
+                shallowWells += 1
+        else:
+            wellDepth = min(heights[i-1],heights[i+1]) - heights[i]
+            if wellDepth == 1:
+                shallowWells += 1
+    if DEBUG_SCORE:
+        print("Shallow wells:", shallowWells)
+    return shallowWells
+
+
+# Calculates the pattern diversity of the board
+# This is done by looking at the different transitions between adjacent columns (wall excluded)
+# Only the top of each column is looked at, so holes do no matter
+def getPatternDiversity(heights):
+    patterns = []
+    for i in range(len(heights)):
+        if i < (len(heights)-1):
+            pattern = heights[i+1] - heights[i]
+            if pattern not in patterns:
+                patterns.append(pattern)
+
+    if DEBUG_SCORE:
+        print("patternDiversity:", len(patterns))
+    return len(patterns)
+
 # Calculates the difference between the highest and lowest column height
 def getDeltaHeight(heights):
     deltaHeight = (max(heights)-min(heights))
@@ -121,29 +156,32 @@ def getHeights(board):
 class AI(object):
 
     def __init__(self, weights=None):
-        self.weights = weights or (0.91085795, -1.14138722, -0.11095269, -0.21057699, -0.02961168, 0.02429384)
+        self.weights = weights or (0.91085795, -1.14138722, -0.11095269, -0.21057699, 0.22961168, 0.02429384, -0.5, 0.5)
 
     def score_board(self, original_board, this_board):
         heights = getHeights(this_board)
         if DEBUG_SCORE:
             this_board.printSelf()
 
-        fullRows = getFullRows(this_board) # cleared lines 
-        holes = getHoles(this_board) #  (Bart)
-        holeDepth = getHoleDepth(this_board) # cumulative hole depth (Bart)
-        bumpiness = getBumpiness(heights) # the sum of height differences between adjacent columns (Jasper)
-        deepWells = getDeepWells(heights) # sum of well depths of depth > 1 (Abel)
-        deltaHeight = getDeltaHeight(heights) # height difference between heighest and lowest (Abel)
+        fullRows = getFullRows(this_board)
+        holes = getHoles(this_board)
+        holeDepth = getHoleDepth(this_board)
+        bumpiness = getBumpiness(heights)
+        deepWells = getDeepWells(heights)
+        deltaHeight = getDeltaHeight(heights)
+        shallowWells = getShallowWells(heights)
+        patternDiversity = getPatternDiversity(heights)
 
-
-        A, B, C, D, E, F = self.weights
+        A, B, C, D, E, F, G, H = self.weights
         score = (
             (A * fullRows) +
             (B * holes) +
             (C * holeDepth) +
             (D * bumpiness) +
             (E * deepWells) +
-            (F * deltaHeight)
+            (F * deltaHeight) +
+            (G * shallowWells) +
+            (H * patternDiversity)
         )
         if DEBUG_SCORE:
             print("Score of board:", score)

@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
+
 # coding: utf-8
 
 # Natural evolution strategies (NES) adapted from https://arxiv.org/abs/1703.03864 and implementation from https://gist.github.com/karpathy/77fbb6a8dac5395f1b73e7a89300318d
@@ -69,8 +71,8 @@ class NES:
       self.weights += self.learningrate * grad
 
 
-      if i % 20 == 0:
-        print('iter %d. w: %s, reward: %f' % 
+      if i % 1 == 0:
+        print('iter %d. w: %s, reward: %d' % 
           (i, str(self.weights), self.runTetris(tuple(self.weights))))
 
 
@@ -78,7 +80,7 @@ class NES:
 # In[12]:
 
 
-weights = [0.3, 0.4, 0.5, -0.3, -0.4, -0.5] #[-1, -1, -1, 1]
+weights = [0.3, -0.4, -0.5, -0.3, -0.4, -0.5, -0.1, 0.4] #[-1, -1, -1, 1]
 steps = 300
 sigma = 0.1
 learningrate = 0.01

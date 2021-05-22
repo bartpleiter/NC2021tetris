@@ -69,7 +69,7 @@ class SimpleEA:
                 tempweights.append(np.random.uniform(-1, 1))
             self.population.append(self.normalize(tempweights))
         
-        print("Calculating fitnesses for generation: 0");
+        print("Running generation: 0");
         #Step 2) evaluate quality candidate
         self.fitnesses = []
         processList = []
@@ -194,11 +194,8 @@ class SimpleEA:
         generation = 0
         while generation < self.termgeneration:
 
-            print("Starting generation:", generation);
-
             # list containing the next generation, prefilled with winners of binary tournament
             nextGeneration = self.eliteSelection(self.numberOfBest, self.numberOfGood)
-            
 
             # fill the rest of the next generation
             while len(nextGeneration) < self.popsize:
@@ -236,6 +233,8 @@ class SimpleEA:
                 if len(nextGeneration) < self.popsize:
                     nextGeneration.append(child2)
 
+            generation += 1
+            print("Running generation:", generation);
                 
             # d: Evaluate the new candidates
             nextGenerationFitnesses = []
@@ -264,13 +263,12 @@ class SimpleEA:
             self.printGeneration(generation)
 
             # done with iteration
-            generation += 1
 
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
 start = time.time()
-bleh = SimpleEA([None]*6, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT)
+bleh = SimpleEA([None]*8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT)
 bleh.runEA()
 end = time.time()
 print("Running time:", end-start, "seconds")

@@ -9,7 +9,7 @@ from players import AI
 def start(weights=None):
     player = AI(weights)
     game = Game(player)
-    game.new_game()
+    game.new_game(pieceLimit=3)
     game.start_ticking()
     game.run_game()
 
