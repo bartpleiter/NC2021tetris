@@ -12,10 +12,10 @@ import numpy as np
 np.seterr(all='raise') #raise errors instead of printing a warning in order to catch them as an exception.
 import argparse
 import warnings
+
+
 from game import Game
 from players import AI
-
-
 
 import concurrent.futures
 
@@ -56,7 +56,6 @@ class NES:
       
     
       N = np.random.randn(self.population, len(self.weights))
-      
       R = np.zeros(self.population)
       X = []
       solutions = []
@@ -67,14 +66,9 @@ class NES:
 
       with concurrent.futures.ProcessPoolExecutor() as executor:
         for j in range(self.population):
-          
           processList.append(executor.submit(self.runTetris, tuple(solutions[j])))
-          
-          #solution = self.weights + self.sigma*N[j]
-          #R[j] = self.runTetris(tuple(solution))
-          
-        for t in processList:
-         
+        
+        for t in processList:         
           X.append(t.result())
       
       #Try and catch for calculating the gradient in case of rewards being 0.
@@ -102,22 +96,22 @@ class NES:
 
 
 
-# In[12]:
 
 
+#Parameters
 weights = [0.3, -0.4, -0.5, -0.3, -0.4, -0.5, -0.1, 0.4] #working weights
-steps = 5
-sigma = 0.1
-learningrate = 0.01
-population = 50
-piecelimit = -1
-runs = 5
-log = True
-experiment_name = 'test'
+steps = 5 #Amount of iterations per run
+sigma = 0.1 #size of gaussian sampling
+learningrate = 0.01 #learningrate 
+population = 50 #number of weights samples from the gaussian distribution
+piecelimit = -1 #piecelimit for the game (-1 is unlimited)
+runs = 5 #Number of runs
+log = True #When set to True it will create a log file per run with results
+experiment_name = 'test' #this name will be the name of your file + corresponding run number
 
 
 
-
+#Multiple runs with random intialized weights TO DO: think about intialization
 for run in range(runs):
 	experiment = str(run) + '_' + experiment_name
 	weights = np.random.uniform(low = -1.5, high = 1.5, size= (8,))
