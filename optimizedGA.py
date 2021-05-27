@@ -25,6 +25,8 @@ P_GENERATIONS = 32
 P_MUTATIONREDUCTION = True
 P_BESTAMOUNT = 5
 P_GOODAMOUNT = 25
+LOG = False #When set to True it will create a log file per run with results
+EXP_NAME = 'test Optimized'
 
 """
 ########################
@@ -46,7 +48,7 @@ Steps (you can see them back in the code below):
 class SimpleEA:
 
     # constructor
-    def __init__(self, weights, popsize = 100, poffspring = 0.5, pmut = 0.1, termgeneration = 10, reduceMutationRate = True, numberOfBest = 5, numberOfGood = 25):
+    def __init__(self, weights, popsize = 100, poffspring = 0.5, pmut = 0.1, termgeneration = 10, reduceMutationRate = True, numberOfBest = 5, numberOfGood = 25, log = False, experiment_name = " ", run = 0):
         self.weights = weights # list of weights, represented by a list containing weight values
         self.popsize = popsize # population size
         self.poffspring = poffspring # offspring probability
@@ -55,6 +57,9 @@ class SimpleEA:
         self.reduceMutationRate = reduceMutationRate # Whether or not the algorithm will use reducing mutation rate.
         self.numberOfBest = numberOfBest # Number of the best of population taken to next generation
         self.numberOfGood = numberOfGood # Number of the best + other good of population taken to next generation
+        self.log = log #When set to True it will create a log file per run with results
+        self.experiment_name = experiment_name #name for logging purposes
+        self.run = run # run number for logging purposes
         self.bestScoreList = []
         self.bestWeightsList = []
 
@@ -176,6 +181,11 @@ class SimpleEA:
         print("Average weights for generation", generation, ":",  [ '%.3f' % w for w in self.averageWeights() ])
         print("-------------------------")
 
+    def log_results(self, generation):
+        with open('OEA_results/'+ str(self.run), 'a') as file:
+            toLog = (str(generation) + '|' + ", ".join(self.population[self.fitnesses.index(max(self.fitnesses))]) + '|' + ", ".join(max(self.fitnesses)) + '|' + ", ".join(averageWeights()) + '|' + ", ".join((sum(self.fitnesses)/len(self.fitnesses))))
+            file.write(toLog + '\n')
+        
     def eliteSelection(self, best, good):
         returnList = []
 
@@ -262,18 +272,28 @@ class SimpleEA:
 
             self.printGeneration(generation)
 
+            if self.log == True:
+                self.log_results(generation)
             # done with iteration
 
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
+    
+runs = 5 #Number of runs
 start = time.time()
-bleh = SimpleEA([None]*8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT)
-bleh.runEA()
+for run in range(runs):
+    experiment = str(run) + '_' + EXP_NAME
+    samplerun = SimpleEA([None] * 8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT, LOG, experiment, run)
+    samplerun.runEA()
+    #print(bleh.bestScoreList)
+    #print(bleh.bestWeightsList)
+    print(max(samplerun.bestScoreList))
+    print(samplerun.bestWeightsList[samplerun.bestScoreList.index(max(samplerun.bestScoreList))])
+
 end = time.time()
 print("Running time:", end-start, "seconds")
-#print(bleh.bestScoreList)
-#print(bleh.bestWeightsList)
+
 
 print("Final results:")
 print("Max score:", max(bleh.bestScoreList))
