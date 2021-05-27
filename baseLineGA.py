@@ -22,6 +22,8 @@ P_MUTATION = 0.1 # mutation probability
 P_CROSSOVER = 0.5 # crossover probability
 P_POPULATIONSIZE = 100
 P_GENERATIONS = 32 
+LOG = False #When set to True it will create a log file per run with results
+EXP_NAME = 'test Basic'
 
 """
 ########################
@@ -43,12 +45,15 @@ Steps (you can see them back in the code below):
 class SimpleEA:
 
     # constructor
-    def __init__(self, weights, popsize = 50, poffspring = 0.7, pmut = 0.1, termgeneration = 10):
+    def __init__(self, weights, popsize = 50, poffspring = 0.7, pmut = 0.1, termgeneration = 10, log = False, experiment_name = " ", run = 0):
         self.weights = weights # list of weights, represented by a list containing weight values
         self.popsize = popsize # population size
         self.poffspring = poffspring # offspring probability
         self.pmut = pmut # mutation probability
         self.termgeneration = termgeneration # number of generation until termination
+        self.log = log #When set to True it will create a log file per run with results
+        self.experiment_name = experiment_name #name for logging purposes
+        self.run = run # run number for logging purposes
         self.bestScoreList = []
         self.bestWeightsList = []
 
@@ -169,6 +174,11 @@ class SimpleEA:
         print("Average score for generation", generation, ":", int(np.mean(self.fitnesses)))
         print("Average weights for generation", generation, ":",  [ '%.3f' % w for w in self.averageWeights() ])
         print("-------------------------")
+        
+    def log_results(self, generation):
+        with open('BEA_results/'+ str(self.run), 'a') as file:
+            toLog = (str(generation) + '|' + ", ".join(self.population[self.fitnesses.index(max(self.fitnesses))]) + '|' + ", ".join(max(self.fitnesses)) + '|' + ", ".join(averageWeights()) + '|' + ", ".join("AVG score"))
+            file.write(toLog + '\n')
 
     # TODO
     # STEP 3: run algorithm until termination condition satisfied
@@ -238,14 +248,21 @@ class SimpleEA:
 
             self.printGeneration(generation)
 
+            if self.log == True:
+                self.log_results(generation)
             # done with iteration
 
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
+    
+runs = 5 #Number of runs
 start = time.time()
-bleh = SimpleEA([None]*8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS)
-bleh.runEA()
+for run in range(runs):
+    experiment = str(run) + '_' + EXP_NAME
+    bleh = SimpleEA([None]*8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, LOG, experiment, run)
+    bleh.runEA()
+    
 end = time.time()
 print("Running time:", end-start, "seconds")
 #print(bleh.bestScoreList)
