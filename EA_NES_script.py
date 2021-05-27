@@ -106,7 +106,7 @@ learningrate = 0.01 #learningrate
 population = 50 #number of weights samples from the gaussian distribution
 piecelimit = -1 #piecelimit for the game (-1 is unlimited)
 runs = 5 #Number of runs
-log = True #When set to True it will create a log file per run with results
+log = False #When set to True it will create a log file per run with results
 experiment_name = 'test' #this name will be the name of your file + corresponding run number
 
 
