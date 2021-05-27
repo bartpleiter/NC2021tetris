@@ -42,17 +42,28 @@ class NES:
     reward = game.run_game()
     return reward
 
-  def log_results(self, reward, iteration):
+  def log_results(self, reward, iteration, failed, failed_weights):
 
     with open('NES_results/'+ str(self.run), 'a') as file:
       toLog = (str(iteration) + '|' + ", ".join(["{:.4f}".format(w) for w in self.weights]) + '|' + str(reward))
       file.write(toLog + '\n')
 
+    if failed:
+      with open('NES_results/'+ str(self.run)+'failed', 'a') as file:
+        toLog = (str(iteration) + '|' + ", ".join(["{:.4f}".format(w) for w in failed_weights]) + '|' + str(reward))
+        file.write(toLog + '\n')
+
 
   def optimize(self):
-    for i in range(self.steps):
+    #for i in range(self.steps):
+    fail_counter = 0
+    i = 0
+    failed = False
 
-      
+    while i < self.steps:
+      print("iteration :", i)
+      failed_weights = self.weights
+
     
       N = np.random.randn(self.population, len(self.weights))
       R = np.zeros(self.population)
@@ -74,23 +85,30 @@ class NES:
       try:
         standardized_rewards = (X - np.mean(X)) / np.std(X)
         grad = np.dot(N.T, standardized_rewards)/(population * sigma)
+        self.weights += self.learningrate * grad
 
-      except FloatingPointError: #Flawed solution to the problem, need to think about it
-        X = [x + 0.0001 for x in X]
-        standardized_rewards = (X - np.mean(X)) / np.std(X)
-        grad = np.dot(N.T, standardized_rewards)/(population * sigma)
-        print('Flawed solution', grad)
+      except FloatingPointError:
+        self.weights = np.random.uniform(low = -1.5, high = 1.5, size= (8,))
+        fail_counter += 1 
+        i = 0
+        failed = True
+
       
       #standardized_rewards = (R - np.mean(R)) / np.std(R)
       
-      self.weights += self.learningrate * grad
-
+      
+ 
       reward = self.runTetris(tuple(self.weights))
       if i % 1 == 0:
         print('iter %d. w: %s, reward: %d' % 
           (i, str(self.weights), reward))
-      if self.log == True:
-        self.log_results(reward, i)
+
+      if self.log == True and failed == False:
+        self.log_results(reward, i, False, 0)
+      elif self.log == True and failed == True:
+        self.log_results(reward, i,True, failed_weights)
+      failed = False
+      i += 1
 
 
 
@@ -105,7 +123,7 @@ learningrate = 0.01 #learningrate
 population = 50 #number of weights samples from the gaussian distribution
 piecelimit = -1 #piecelimit for the game (-1 is unlimited)
 runs = 5 #Number of runs
-log = False #When set to True it will create a log file per run with results
+log = True #When set to True it will create a log file per run with results
 experiment_name = 'test' #this name will be the name of your file + corresponding run number
 
 
