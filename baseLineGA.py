@@ -22,7 +22,7 @@ P_MUTATION = 0.1 # mutation probability
 P_CROSSOVER = 0.5 # crossover probability
 P_POPULATIONSIZE = 100
 P_GENERATIONS = 32 
-LOG = False #When set to True it will create a log file per run with results
+LOG = True #When set to True it will create a log file per run with results
 EXP_NAME = 'test Basic'
 
 """
@@ -177,7 +177,11 @@ class SimpleEA:
         
     def log_results(self, generation):
         with open('BEA_results/'+ str(self.run), 'a') as file:
-            toLog = (str(generation) + '|' + ", ".join(self.population[self.fitnesses.index(max(self.fitnesses))]) + '|' + ", ".join(max(self.fitnesses)) + '|' + ", ".join(averageWeights()) + '|' + ", ".join("AVG score"))
+            toLog = (str(generation) + '|' 
+                + ", ".join(['%.4f' % x for x in self.population[self.fitnesses.index(max(self.fitnesses))]]) 
+                + '|' + str(max(self.fitnesses))
+                + '|' + ", ".join(['%.4f' % x for x in self.averageWeights()]) 
+                + '|' + str((sum(self.fitnesses)/len(self.fitnesses))))
             file.write(toLog + '\n')
 
     # TODO

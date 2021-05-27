@@ -25,7 +25,7 @@ P_GENERATIONS = 32
 P_MUTATIONREDUCTION = True
 P_BESTAMOUNT = 5
 P_GOODAMOUNT = 25
-LOG = False #When set to True it will create a log file per run with results
+LOG = True #When set to True it will create a log file per run with results
 EXP_NAME = 'test Optimized'
 
 """
@@ -183,7 +183,11 @@ class SimpleEA:
 
     def log_results(self, generation):
         with open('OEA_results/'+ str(self.run), 'a') as file:
-            toLog = (str(generation) + '|' + ", ".join(self.population[self.fitnesses.index(max(self.fitnesses))]) + '|' + ", ".join(max(self.fitnesses)) + '|' + ", ".join(averageWeights()) + '|' + ", ".join((sum(self.fitnesses)/len(self.fitnesses))))
+            toLog = (str(generation) + '|' 
+                + ", ".join(['%.4f' % x for x in self.population[self.fitnesses.index(max(self.fitnesses))]]) 
+                + '|' + str(max(self.fitnesses))
+                + '|' + ", ".join(['%.4f' % x for x in self.averageWeights()]) 
+                + '|' + str((sum(self.fitnesses)/len(self.fitnesses))))
             file.write(toLog + '\n')
         
     def eliteSelection(self, best, good):
