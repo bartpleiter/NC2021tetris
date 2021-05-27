@@ -44,10 +44,9 @@ class NES:
 
   def log_results(self, reward, iteration):
 
-  	with open('NES_results/'+ str(self.run), 'a') as file:
-  		file.write(str(iteration) + ',' + str(self.weights) + ',' + str(reward) + '\n')
-
-
+    with open('NES_results/'+ str(self.run), 'a') as file:
+      toLog = (str(iteration) + '|' + ", ".join(["{:.4f}".format(w) for w in self.weights]) + '|' + str(reward))
+      file.write(toLog + '\n')
 
 
   def optimize(self):
@@ -73,14 +72,14 @@ class NES:
       
       #Try and catch for calculating the gradient in case of rewards being 0.
       try:
-      	standardized_rewards = (X - np.mean(X)) / np.std(X)
-      	grad = np.dot(N.T, standardized_rewards)/(population * sigma)
+        standardized_rewards = (X - np.mean(X)) / np.std(X)
+        grad = np.dot(N.T, standardized_rewards)/(population * sigma)
 
       except FloatingPointError: #Flawed solution to the problem, need to think about it
-      	X = [x + 0.0001 for x in X]
-      	standardized_rewards = (X - np.mean(X)) / np.std(X)
-      	grad = np.dot(N.T, standardized_rewards)/(population * sigma)
-      	print('Flawed solution', grad)
+        X = [x + 0.0001 for x in X]
+        standardized_rewards = (X - np.mean(X)) / np.std(X)
+        grad = np.dot(N.T, standardized_rewards)/(population * sigma)
+        print('Flawed solution', grad)
       
       #standardized_rewards = (R - np.mean(R)) / np.std(R)
       
@@ -91,7 +90,7 @@ class NES:
         print('iter %d. w: %s, reward: %d' % 
           (i, str(self.weights), reward))
       if self.log == True:
-      	self.log_results(reward, i)
+        self.log_results(reward, i)
 
 
 
@@ -113,10 +112,10 @@ experiment_name = 'test' #this name will be the name of your file + correspondin
 
 #Multiple runs with random intialized weights TO DO: think about intialization
 for run in range(runs):
-	experiment = str(run) + '_' + experiment_name
-	weights = np.random.uniform(low = -1.5, high = 1.5, size= (8,))
-	samplerun = NES(weights, steps, sigma, learningrate, population, piecelimit, experiment, log)
-	samplerun.optimize()
+  experiment = str(run) + '_' + experiment_name
+  weights = np.random.uniform(low = -1.5, high = 1.5, size= (8,))
+  samplerun = NES(weights, steps, sigma, learningrate, population, piecelimit, experiment, log)
+  samplerun.optimize()
 
 
 # In[ ]:
