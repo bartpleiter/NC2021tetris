@@ -12,15 +12,12 @@ import numpy as np
 np.seterr(all='raise') #raise errors instead of printing a warning in order to catch them as an exception.
 import argparse
 import warnings
-
+import time
 
 from game import Game
 from players import AI
 
 import concurrent.futures
-
-
-# In[11]:
 
 
 class NES:
@@ -55,7 +52,6 @@ class NES:
 
 
   def optimize(self):
-    #for i in range(self.steps):
     fail_counter = 0
     i = 0
     failed = False
@@ -92,9 +88,10 @@ class NES:
         fail_counter += 1 
         i = 0
         failed = True
-        with open('NES_results/'+ str(self.run), 'a') as file:
+        with open('NES_results/'+ str(self.run), 'w') as file:
           file.truncate()
-          
+          file.close()
+
 
 
       
@@ -118,29 +115,53 @@ class NES:
 
 
 
+def run_experiment(steps, sigma, learningrate, population, piecelimit,  runs, log,  experiment_name):
+  for run in range(runs):
+    start = time.time()
+    experiment = str(run) + '_' + experiment_name
+    weights = np.random.uniform(low = -1.5, high = 1.5, size= (8,))
+    samplerun = NES(weights, steps, sigma, learningrate, population, piecelimit, experiment, log)
+    samplerun.optimize()
+    end = time.time()
+    runtime = end - start
+    with open('NES_results/'+ 'runtime', 'a') as file:
+          toLog = str(run) + '_' + (str(experiment) + '|' + str(runtime))
+          file.write(toLog + '\n')
 
-#Parameters
 weights = [0.3, -0.4, -0.5, -0.3, -0.4, -0.5, -0.1, 0.4] #working weights
-steps = 5 #Amount of iterations per run
+"""
+---------------------------------
+Baseline settings for experiments
+---------------------------------
+"""
+steps = 32#Amount of iterations per run
 sigma = 0.1 #size of gaussian sampling
 learningrate = 0.01 #learningrate 
-population = 50 #number of weights samples from the gaussian distribution
+population = 100 #number of weights samples from the gaussian distribution
 piecelimit = -1 #piecelimit for the game (-1 is unlimited)
-runs = 5 #Number of runs
+runs = 10#Number of runs
 log = True #When set to True it will create a log file per run with results
-experiment_name = 'test' #this name will be the name of your file + corresponding run number
+experiment_name = 'baseline_32_01_001_100_-1_10' #this name will be the name of your file + corresponding run number
 
 
+"""
+------------------------
+Baseline experimenst
+------------------------
+"""
+run_experiment(steps,sigma, learningrate, population,piecelimit,runs, log, experiment_name)
+run_experiment(32, 0.1, 0.01, 50, -1, 10, True, 'baseline_red_pop_32_01_001_50_-1_10')
+run_experiment(32, 0.1, 0.01, 25, -1, 10, True, 'baseline_red_pop2_32_01_001_25_-1_10')
+run_experiment(64, 0.1, 0.01, 100, -1, 10, True, 'baseline_increasedsteps_64_01_001_100_-1_10')
+run_experiment(32, 0.2, 0.01, 100, -1, 10, True, 'baseline_increased_sigma_32_02_001_50_-1_10')
+run_experiment(32, 0.1, 0.05, 100, -1, 10, True, 'baseline_increased_lr_32_01_001_50_-1_10')
+run_experiment(32, 0.1, 0.005, 100, -1, 10, True, 'baseline_reduced_lr_32_01_001_50_-1_10')
+run_experiment(100, 0.1, 0.01, 100, -1, 10, True, 'beefedup_100_01_001_100_-1_10')
+run_experiment(100, 0.1, 0.01, 50, -1, 10, True, 'beefedup_red_pop_100_01_001_50_-1_10')
+run_experiment(100, 0.1, 0.01, 25, -1, 10, True, 'beefedup_red_pop2_100_01_001_25_-1_10')
+run_experiment(100, 0.1, 0.05, 100, -1, 10, True, 'beefedup_increased_lr_32_01_005_100_-1_10')
+run_experiment(100, 0.1, 0.005, 100, -1, 10, True, 'beefedup_reduced_lr_32_01_0005_100_-1_10')
 
-#Multiple runs with random intialized weights TO DO: think about intialization
-for run in range(runs):
-  experiment = str(run) + '_' + experiment_name
-  weights = np.random.uniform(low = -1.5, high = 1.5, size= (8,))
-  samplerun = NES(weights, steps, sigma, learningrate, population, piecelimit, experiment, log)
-  samplerun.optimize()
-
-
-# In[ ]:
 
 
 
