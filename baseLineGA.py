@@ -176,7 +176,7 @@ class SimpleEA:
         print("-------------------------")
         
     def log_results(self, generation):
-        with open('BEA_results/'+ str(self.run), 'a') as file:
+        with open('BEA_results/'+ str(self.experiment_name), 'a') as file:
             toLog = (str(generation) + '|' 
                 + ", ".join(['%.4f' % x for x in self.population[self.fitnesses.index(max(self.fitnesses))]]) 
                 + '|' + str(max(self.fitnesses))
