@@ -13,7 +13,7 @@ import time
 
 from players import AI
 
-PIECELIMIT = 2000 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
+PIECELIMIT = -1 # Maximum number of pieces in a game before game over. Set to -1 for unlimited
 
 ########################
 # HYPER PARAMETERS
@@ -284,21 +284,46 @@ class SimpleEA:
         return self.bestScoreList
 
     
-runs = 5 #Number of runs
-start = time.time()
+runs = 10 #Number of runs
 for run in range(runs):
-    experiment = str(run) + '_' + EXP_NAME
-    samplerun = SimpleEA([None] * 8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT, LOG, experiment, run)
-    samplerun.runEA()
-    #print(bleh.bestScoreList)
-    #print(bleh.bestWeightsList)
-    print(max(samplerun.bestScoreList))
-    print(samplerun.bestWeightsList[samplerun.bestScoreList.index(max(samplerun.bestScoreList))])
+    start = time.time()
+    experiment = str(run) + '_' + "Base"
+    bleh = SimpleEA([None] * 8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT, LOG, experiment, run)
+    bleh.runEA()
+    end = time.time()
+    with open('OEA_results/'+ "Base" + "_times", 'a') as file:
+        file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
-end = time.time()
-print("Running time:", end-start, "seconds")
+for run in range(runs):
+    start = time.time()
+    experiment = str(run) + '_' + "LinMut"
+    bleh = SimpleEA([None] * 8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, False, P_BESTAMOUNT, P_GOODAMOUNT, LOG, experiment, run)
+    bleh.runEA()
+    end = time.time()
+    with open('OEA_results/'+ "LinMut" + "_times", 'a') as file:
+        file.write("Running time: " + str(end-start) + " seconds" + '\n')
+
+for run in range(runs):
+    start = time.time()
+    experiment = str(run) + '_' + "KeepBestHalf"
+    bleh = SimpleEA([None] * 8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, 50, 50, LOG, experiment, run)
+    bleh.runEA()
+    end = time.time()
+    with open('OEA_results/'+ "KeepBestHalf" + "_times", 'a') as file:
+        file.write("Running time: " + str(end-start) + " seconds" + '\n')
+
+for es in range(3):
+    for run in range(runs):
+        start = time.time()
+        experiment = str(run) + '_' + "EliteSelection_" + str(es+1)
+        bleh = SimpleEA([None] * 8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, (es+1)*10, (es+1)*20, LOG, experiment, run)
+        bleh.runEA()
+        end = time.time()
+        with open('OEA_results/'+ "EliteSelection_" + str(es+1) + "_times", 'a') as file:
+            file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
 
-print("Final results:")
-print("Max score:", max(bleh.bestScoreList))
-print("Weights to get best score:", [ '%.4f' % w for w in bleh.bestWeightsList[bleh.bestScoreList.index(max(bleh.bestScoreList))] ])
+
+#print("Final results:")
+#print("Max score:", max(bleh.bestScoreList))
+#print("Weights to get best score:", [ '%.4f' % w for w in bleh.bestWeightsList[bleh.bestScoreList.index(max(bleh.bestScoreList))] ])
