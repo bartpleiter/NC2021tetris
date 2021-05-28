@@ -268,7 +268,7 @@ for run in range(runs):
     bleh.runEA()
     end = time.time()
     with open('BEA_results/'+ "Base" + "_times", 'a') as file:
-        file.write("Running time: " + end-start + " seconds" + '\n')
+        file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
 for run in range(runs):
     start = time.time()
@@ -277,7 +277,7 @@ for run in range(runs):
     bleh.runEA()
     end = time.time()
     with open('BEA_results/'+ "10pop" + "_times", 'a') as file:
-        file.write("Running time: " + end-start + " seconds" + '\n')
+        file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
 for run in range(runs):
     start = time.time()
@@ -286,7 +286,7 @@ for run in range(runs):
     bleh.runEA()
     end = time.time()
     with open('BEA_results/'+ "20pop" + "_times", 'a') as file:
-        file.write("Running time: " + end-start + " seconds" + '\n')
+        file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
 for run in range(runs):
     start = time.time()
@@ -295,7 +295,7 @@ for run in range(runs):
     bleh.runEA()
     end = time.time()
     with open('BEA_results/'+ "50pop" + "_times", 'a') as file:
-        file.write("Running time: " + end-start + " seconds" + '\n')
+        file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
 for mr in range(5):
     for run in range(runs):
@@ -305,7 +305,7 @@ for mr in range(5):
         bleh.runEA()
         end = time.time()
         with open('BEA_results/'+ "MutationRate_" + str(mr+1) + "_times", 'a') as file:
-            file.write("Running time: " + end-start + " seconds" + '\n')
+            file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
 for co in range(3):
     for run in range(runs):
@@ -315,7 +315,7 @@ for co in range(3):
         bleh.runEA()
         end = time.time()
         with open('BEA_results/'+ "CrossoverRate_" + str(co+1) + "_times", 'a') as file:
-            file.write("Running time: " + end-start + " seconds" + '\n')
+            file.write("Running time: " + str(end-start) + " seconds" + '\n')
 #print(bleh.bestScoreList)
 #print(bleh.bestWeightsList)
 
