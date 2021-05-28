@@ -92,6 +92,10 @@ class NES:
         fail_counter += 1 
         i = 0
         failed = True
+        with open('NES_results/'+ str(self.run), 'a') as file:
+          file.truncate()
+          
+
 
       
       #standardized_rewards = (R - np.mean(R)) / np.std(R)
