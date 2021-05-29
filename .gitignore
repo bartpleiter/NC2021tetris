@@ -88,6 +88,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
-NES_results/
-BEA_results/
-OEA_results/
+#NES_results/
+#BEA_results/
+#OEA_results/
