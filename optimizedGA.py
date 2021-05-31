@@ -285,6 +285,17 @@ class SimpleEA:
 
     
 runs = 10 #Number of runs
+for mut in range(5):
+    for run in range(runs):
+        start = time.time()
+        experiment = str(run) + '_' + "OptimizedMutation_" + str(mut+1)
+        bleh = SimpleEA([None] * 8, P_POPULATIONSIZE, P_CROSSOVER, (mut+1)*0.1, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT, LOG, experiment, run)
+        bleh.runEA()
+        end = time.time()
+        with open('OEA_results/'+ "OptimizedMutation_" + str(mut+1) + "_times", 'a') as file:
+            file.write("Running time: " + str(end-start) + " seconds" + '\n')
+
+"""
 for run in range(runs):
     start = time.time()
     experiment = str(run) + '_' + "Base"
@@ -321,7 +332,7 @@ for es in range(3):
         end = time.time()
         with open('OEA_results/'+ "EliteSelection_" + str(es+1) + "_times", 'a') as file:
             file.write("Running time: " + str(end-start) + " seconds" + '\n')
-
+"""
 
 
 #print("Final results:")
