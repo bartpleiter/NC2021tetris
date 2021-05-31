@@ -8,11 +8,15 @@ import sys
 from os import listdir
 from os.path import isfile, join
 
+if len(sys.argv) < 3:
+    print("Please give a log filter argument (specifying which logs to read), and an EXP number for in the plot titles")
+    exit()
+
+EXP_NR = sys.argv[2]
 
 # get all logs from folder
-allLogFiles = [f for f in listdir("NES_results") if isfile(join("NES_results", f))]
+allLogFiles = [f for f in listdir("NES_results") if isfile(join("NES_results", f)) and sys.argv[1] in f and "failed" not in f]
 allLogFiles.sort()
-
 
 # parse log files into lists
 def parseLog(file):
@@ -49,6 +53,7 @@ for idx, log in enumerate(parsedLogs):
 plt.xlabel("Generation")
 plt.ylabel("Score")
 plt.title("Score per generation for each run")
+plt.title("EXP "+EXP_NR+": Score per generation for each run")
 plt.legend()
 plt.show()
 
@@ -65,6 +70,6 @@ for i in range(len(weightNames)):
 
     plt.xlabel("Generation")
     plt.ylabel("Score")
-    plt.title(weightNames[i] + " weight per generation for each run")
+    plt.title("EXP "+EXP_NR+": " + weightNames[i] + " weight per generation for each run")
     plt.legend()
     plt.show()
