@@ -41,6 +41,36 @@ def parseLog(file):
 parsedLogs = [parseLog(f) for f in allLogFiles]
 
 
+GENERATIONS = list(range(len(parsedLogs[0])))
+RUNS = len(parsedLogs)
+
+# plot average scores
+meanScores = []
+stdScores = []
+rangeScores = []
+
+for gen in GENERATIONS:
+    scores = [x[2] for x in [run[gen] for run in parsedLogs]]
+    meanScores.append(np.mean(scores))
+    stdScores.append(np.std(scores))
+    rangeScores.append((np.min(scores), np.max(scores)))
+    
+
+lowestScores = [c[0] for c in rangeScores]
+highestScores = [c[1] for c in rangeScores]
+
+stdScores = np.array(stdScores)
+meanScores = np.array(meanScores)
+
+plt.plot(GENERATIONS, meanScores) 
+plt.fill_between(GENERATIONS, meanScores, meanScores + stdScores, color='r', alpha=.1) 
+plt.fill_between(GENERATIONS, lowestScores, meanScores, color='b', alpha=.1) 
+plt.xlabel("Generation")
+plt.ylabel("Score")
+plt.title("EXP "+EXP_NR+": Mean score for each generation averaged over " + str(RUNS) + " runs, \nthe upper STD in red, and the lower bound in blue")
+plt.show()
+
+
 # plot scores
 gen = [l[0] for l in parsedLogs[0]]
 score = [l[2] for l in parsedLogs[0]]
