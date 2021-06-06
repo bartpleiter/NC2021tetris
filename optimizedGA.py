@@ -285,6 +285,16 @@ class SimpleEA:
 
     
 runs = 10 #Number of runs
+for run in range(runs):
+    start = time.time()
+    experiment = str(run) + '_' + "Final"
+    bleh = SimpleEA([None] * 8, P_POPULATIONSIZE, 0.4, 0.4, P_GENERATIONS, P_MUTATIONREDUCTION, 10, 10, LOG, experiment, run)
+    bleh.runEA()
+    end = time.time()
+    with open('OEA_results/'+ "Final" + "_times", 'a') as file:
+        file.write("Running time: " + str(end-start) + " seconds" + '\n')
+
+"""
 for mut in range(5):
     for run in range(runs):
         start = time.time()
@@ -295,7 +305,6 @@ for mut in range(5):
         with open('OEA_results/'+ "OptimizedMutation_" + str(mut+1) + "_times", 'a') as file:
             file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
-"""
 for run in range(runs):
     start = time.time()
     experiment = str(run) + '_' + "Base"
