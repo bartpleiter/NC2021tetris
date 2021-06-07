@@ -62,13 +62,18 @@ highestScores = [c[1] for c in rangeScores]
 stdScores = np.array(stdScores)
 meanScores = np.array(meanScores)
 
+print('std:', stdScores[-1])
+print('avg:', meanScores[-1])
+
 plt.plot(GENERATIONS, meanScores) 
 plt.fill_between(GENERATIONS, meanScores, meanScores + stdScores, color='r', alpha=.1) 
 plt.fill_between(GENERATIONS, lowestScores, meanScores, color='b', alpha=.1) 
 plt.xlabel("Generation")
 plt.ylabel("Score")
 plt.title("EXP "+EXP_NR+": Mean score for each generation averaged over " + str(RUNS) + " runs, \nthe upper STD in red, and the lower bound in blue")
-plt.show()
+plt.savefig("NESPlots_report/EXP"+EXP_NR+"_" +sys.argv[1] +"_meanScore.png")
+#plt.show()
+plt.figure()
 
 
 # plot scores
@@ -85,7 +90,9 @@ plt.ylabel("Score")
 plt.title("Score per generation for each run")
 plt.title("EXP "+EXP_NR+": Score per generation for each run")
 plt.legend()
-plt.show()
+plt.savefig("NESPlots_report/EXP"+EXP_NR+"_" +sys.argv[1] +"_ScorePerRun.png")
+#plt.show()
+plt.figure()
 
 
 
@@ -97,9 +104,11 @@ for i in range(len(weightNames)):
         gen = [l[0] for l in log]
         weight = [l[1][i] for l in log]
         plt.plot(gen, weight, label = "run " + str(idx + 1))
-
+    plt.rcParams.update({'figure.max_open_warning': 0})
     plt.xlabel("Generation")
     plt.ylabel("Score")
     plt.title("EXP "+EXP_NR+": " + weightNames[i] + " weight per generation for each run")
     plt.legend()
-    plt.show()
+    plt.savefig("NESPlots_report/EXP"+EXP_NR+"_" +sys.argv[1] +weightNames[i]+"_weights.png")
+    #plt.show()
+    plt.figure()

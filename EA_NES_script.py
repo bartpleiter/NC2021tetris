@@ -149,20 +149,22 @@ experiment_name = 'baseline_32_01_001_100_-1_10' #this name will be the name of 
 Baseline experimenst
 ------------------------
 """
-"""
-run_experiment(steps,sigma, learningrate, population,piecelimit,runs, log, experiment_name)
-run_experiment(32, 0.1, 0.01, 50, -1, 10, True, 'baseline_red_pop_32_01_001_50_-1_10')
-run_experiment(32, 0.1, 0.01, 25, -1, 10, True, 'baseline_red_pop2_32_01_001_25_-1_10')
-run_experiment(64, 0.1, 0.01, 100, -1, 10, True, 'baseline_increasedsteps_64_01_001_100_-1_10')
-run_experiment(32, 0.2, 0.01, 100, -1, 10, True, 'baseline_increased_sigma_32_02_001_50_-1_10')
-run_experiment(32, 0.1, 0.05, 100, -1, 10, True, 'baseline_increased_lr_32_01_001_50_-1_10')
-run_experiment(32, 0.1, 0.005, 100, -1, 10, True, 'baseline_reduced_lr_32_01_001_50_-1_10')
-run_experiment(100, 0.1, 0.01, 100, -1, 10, True, 'beefedup_100_01_001_100_-1_10')
-run_experiment(100, 0.1, 0.01, 50, -1, 10, True, 'beefedup_red_pop_100_01_001_50_-1_10')
-run_experiment(100, 0.1, 0.01, 25, -1, 10, True, 'beefedup_red_pop2_100_01_001_25_-1_10')
-run_experiment(100, 0.1, 0.05, 100, -1, 10, True, 'beefedup_increased_lr_32_01_005_100_-1_10')
-run_experiment(100, 0.1, 0.005, 100, -1, 10, True, 'beefedup_reduced_lr_32_01_0005_100_-1_10')
-"""
+
+#run_experiment(steps,sigma, learningrate, population,piecelimit,runs, log, experiment_name)
+#run_experiment(32, 0.1, 0.01, 50, -1, 10, True, 'baseline_red_pop_32_01_001_50_-1_10')
+#run_experiment(32, 0.1, 0.01, 25, -1, 10, True, 'baseline_red_pop2_32_01_001_25_-1_10')
+#run_experiment(64, 0.1, 0.01, 100, -1, 10, True, 'baseline_increasedsteps_64_01_001_100_-1_10')
+
+#run_experiment(32, 0.2, 0.01, 100, -1, 10, True, 'baseline_increased_sigma_32_02_001_50_-1_10')
+#run_experiment(32, 0.1, 0.05, 100, -1, 10, True, 'baseline_increased_lr_32_01_001_50_-1_10')
+#run_experiment(32, 0.1, 0.005, 100, -1, 10, True, 'baseline_reduced_lr_32_01_001_50_-1_10')
+
+#run_experiment(100, 0.1, 0.01, 100, -1, 10, True, 'beefedup_100_01_001_100_-1_10')
+#run_experiment(100, 0.1, 0.01, 50, -1, 10, True, 'beefedup_red_pop_100_01_001_50_-1_10')
+#run_experiment(100, 0.1, 0.01, 25, -1, 10, True, 'beefedup_red_pop2_100_01_001_25_-1_10')
+#run_experiment(100, 0.1, 0.05, 100, -1, 10, True, 'beefedup_increased_lr_32_01_005_100_-1_10')
+#run_experiment(100, 0.1, 0.005, 100, -1, 10, True, 'beefedup_reduced_lr_32_01_0005_100_-1_10')
+
 
 """
 -----------------------
@@ -172,9 +174,18 @@ Optimizing runs
 
 #run_experiment(32, 0.1, 0.01, 100, -1, 10, True, 'baseline_increased_lr2_32_01_002_100_-1_10')
 #run_experiment(32, 0.1, 0.015, 100, -1, 10, True, 'baseline_increased_lr3_32_01_0015_100_-1_10')
-run_experiment(100, 0.1, 0.015, 100, -1, 10, True, 'beefedup_increased_lr2_32_01_0015_100_-1_10')
-run_experiment(100, 0.1, 0.02, 100, -1, 10, True, 'beefedup_increased_lr3_32_01_002_100_-1_10')
+#run_experiment(100, 0.1, 0.015, 100, -1, 10, True, 'beefedup_increased_lr2_32_01_0015_100_-1_10')
+#run_experiment(100, 0.1, 0.02, 100, -1, 10, True, 'beefedup_increased_lr3_32_01_002_100_-1_10')
+
+#run_experiment(32, 0.1, 0.01, 10, -1, 10, True, 'baseline_red_pop2_32_01_001_10_-1_10')
+#run_experiment(32, 0.1, 0.01, 20, -1, 10, True, 'baseline_red_pop3_32_01_001_20_-1_10')
 
 
 
-
+'''
+----------------------
+Optional runs
+----------------------
+'''
+run_experiment(32, 0.3, 0.01, 100, -1, 10, True, 'baseline_increased_sigma2_32_03_001_100_-1_10')
+run_experiment(32, 0.4, 0.01, 100, -1, 10, True, 'baseline_increased_sigma2_32_04_001_100_-1_10')
