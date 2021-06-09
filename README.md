@@ -1,7 +1,7 @@
 # Tetris NC2021 group project (group 15)
 
 ## Run instructions
-The experiments can be run by executing `optimizedGA.py`, `baselineGA.py` and `EA_NES_script.py`. Make sure to comment out the experiment you want to run.
+The baseline experiments can be run by executing `optimizedGA.py`, `baselineGA.py` and `EA_NES_script.py` for the optimized Genetic algorithm, the baseline genetic algorithm and the Evolutionary strategy respectively. For other experiments make sure you comment out the desired experiment. 
 
 Results are placed in the `*_results` folders. These can be plotted using the `plot*.py` scripts. Make sure to give a proper filename filter as argument and an experiment number/ID.
 
