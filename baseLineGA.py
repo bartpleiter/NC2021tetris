@@ -269,7 +269,7 @@ for run in range(runs):
     end = time.time()
     with open('BEA_results/'+ "Base" + "_times", 'a') as file:
         file.write("Running time: " + str(end-start) + " seconds" + '\n')
-
+"""
 for run in range(runs):
     start = time.time()
     experiment = str(run) + '_' + "10pop"
@@ -316,6 +316,7 @@ for co in range(3):
         end = time.time()
         with open('BEA_results/'+ "CrossoverRate_" + str(co+1) + "_times", 'a') as file:
             file.write("Running time: " + str(end-start) + " seconds" + '\n')
+"""
 #print(bleh.bestScoreList)
 #print(bleh.bestWeightsList)
 
