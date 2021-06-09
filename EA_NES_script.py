@@ -150,7 +150,7 @@ Baseline experimenst
 ------------------------
 """
 
-#run_experiment(steps,sigma, learningrate, population,piecelimit,runs, log, experiment_name)
+run_experiment(steps,sigma, learningrate, population,piecelimit,runs, log, experiment_name)
 #run_experiment(32, 0.1, 0.01, 50, -1, 10, True, 'baseline_red_pop_32_01_001_50_-1_10')
 #run_experiment(32, 0.1, 0.01, 25, -1, 10, True, 'baseline_red_pop2_32_01_001_25_-1_10')
 #run_experiment(64, 0.1, 0.01, 100, -1, 10, True, 'baseline_increasedsteps_64_01_001_100_-1_10')
@@ -187,5 +187,5 @@ Optimizing runs
 Optional runs
 ----------------------
 '''
-run_experiment(32, 0.3, 0.01, 100, -1, 10, True, 'baseline_increased_sigma2_32_03_001_100_-1_10')
-run_experiment(32, 0.4, 0.01, 100, -1, 10, True, 'baseline_increased_sigma2_32_04_001_100_-1_10')
+#run_experiment(32, 0.3, 0.01, 100, -1, 10, True, 'baseline_increased_sigma2_32_03_001_100_-1_10')
+#run_experiment(32, 0.4, 0.01, 100, -1, 10, True, 'baseline_increased_sigma2_32_04_001_100_-1_10')
