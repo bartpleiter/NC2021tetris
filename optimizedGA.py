@@ -283,7 +283,16 @@ class SimpleEA:
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
+for run in range(runs):
+    start = time.time()
+    experiment = str(run) + '_' + "Base"
+    bleh = SimpleEA([None] * 8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT, LOG, experiment, run)
+    bleh.runEA()
+    end = time.time()
+    with open('OEA_results/'+ "Base" + "_times", 'a') as file:
+        file.write("Running time: " + str(end-start) + " seconds" + '\n')
     
+"""    
 runs = 10 #Number of runs
 for run in range(runs):
     start = time.time()
@@ -294,7 +303,6 @@ for run in range(runs):
     with open('OEA_results/'+ "Final" + "_times", 'a') as file:
         file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
-"""
 for mut in range(5):
     for run in range(runs):
         start = time.time()
@@ -304,15 +312,6 @@ for mut in range(5):
         end = time.time()
         with open('OEA_results/'+ "OptimizedMutation_" + str(mut+1) + "_times", 'a') as file:
             file.write("Running time: " + str(end-start) + " seconds" + '\n')
-
-for run in range(runs):
-    start = time.time()
-    experiment = str(run) + '_' + "Base"
-    bleh = SimpleEA([None] * 8, P_POPULATIONSIZE, P_CROSSOVER, P_MUTATION, P_GENERATIONS, P_MUTATIONREDUCTION, P_BESTAMOUNT, P_GOODAMOUNT, LOG, experiment, run)
-    bleh.runEA()
-    end = time.time()
-    with open('OEA_results/'+ "Base" + "_times", 'a') as file:
-        file.write("Running time: " + str(end-start) + " seconds" + '\n')
 
 for run in range(runs):
     start = time.time()
