@@ -283,6 +283,7 @@ class SimpleEA:
         # when done, return the list of best scores for each iteration
         return self.bestScoreList
 
+runs = 10 #Number of runs
 for run in range(runs):
     start = time.time()
     experiment = str(run) + '_' + "Base"
@@ -293,7 +294,6 @@ for run in range(runs):
         file.write("Running time: " + str(end-start) + " seconds" + '\n')
     
 """    
-runs = 10 #Number of runs
 for run in range(runs):
     start = time.time()
     experiment = str(run) + '_' + "Final"
